@@ -8,6 +8,12 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import AddEditProject from './pages/AddEditProject';
+import Project from './pages/Project';
+import Log from './pages/Log';
+import Subtask from './pages/Subtask';
+import User from './pages/User';
+import _404 from './pages/404';
+
 
 import './style/css/login.css'
 import './style/css/master.css'
@@ -30,6 +36,11 @@ function App() {
           <Route exact path="/login" element={<Login />} />
           <Route exact path="/" element={<Dashboard />} />
           <Route exact path="/add-edit-project" element={<AddEditProject />} />
+          <Route exact path="/project" element={<Project />} />
+          <Route exact path="/log" element={<Log />} />
+          <Route exact path="/subtask" element={<Subtask />} />
+          <Route exact path="/user" element={<User />} />
+          <Route exact path="/404" element={<_404 />} />
         </Routes>
       </Router>
     </div>

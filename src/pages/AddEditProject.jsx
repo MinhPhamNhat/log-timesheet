@@ -5,7 +5,7 @@ const AddEditProject = (props) => {
             <div className="wrapper">
                 <nav id="sidebar" className="active">
                     <div className="sidebar-header">
-                        <img src="assets/img/bootstraper-logo.png" alt="bootraper logo" className="app-logo"/>
+                        <img src="/img/bootstraper-logo.png" alt="bootraper logo" className="app-logo"/>
                     </div>
                     <ul className="list-unstyled components text-secondary">
                         <li>
