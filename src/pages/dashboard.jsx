@@ -1,16 +1,11 @@
-import React from 'react'
-import '../style/vendor/fontawesome/css/fontawesome.min.css'
-import '../style/vendor/fontawesome/css/solid.min.css'
-import '../style/vendor/fontawesome/css/brands.min.css'
-import '../style/vendor/flagiconcss/css/flag-icon.min.css'
-
+import React, {useEffect} from 'react';
 const Dashboard = (props) => {
     return (
         <div className="dashboard-page">
             <div className="wrapper">
                 <nav id="sidebar" className="active">
                     <div className="sidebar-header">
-                        <img src="assets/img/bootstraper-logo.png" alt="bootraper logo" className="app-logo"/>
+                        <img src="/img/bootstraper-logo.png" alt="bootraper logo" className="app-logo"/>
                     </div>
                     <ul className="list-unstyled components text-secondary">
                         <li>
@@ -271,7 +266,7 @@ const Dashboard = (props) => {
                                                                         Employees List
                                                                     </button>
                                                                     <div className="modal " id="logtime">
-                                                                        <div className="modal-dialog modal-sm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                                                        <div className="modal-dialog modal-sm" tabIndex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                                                                             <div className="modal-content">
                                                                                 <div className="modal-header">
                                                                                     <h4 className="modal-title">Employees List</h4>
@@ -329,7 +324,7 @@ const Dashboard = (props) => {
                                                                     </button>
 
                                                                     <div className="modal " id="logtime">
-                                                                        <div className="modal-dialog modal-sm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                                                        <div className="modal-dialog modal-sm" tabIndex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                                                                             <div className="modal-content">
                                                                                 <div className="modal-header">
                                                                                     <h4 className="modal-title">Employees List</h4>
@@ -387,7 +382,7 @@ const Dashboard = (props) => {
                                                                     </button>
 
                                                                     <div className="modal " id="logtime">
-                                                                        <div className="modal-dialog modal-sm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                                                        <div className="modal-dialog modal-sm" tabIndex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                                                                             <div className="modal-content">
                                                                                 <div className="modal-header">
                                                                                     <h4 className="modal-title">Employees List</h4>
@@ -445,7 +440,7 @@ const Dashboard = (props) => {
                                                                     </button>
 
                                                                     <div className="modal " id="logtime">
-                                                                        <div className="modal-dialog modal-sm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                                                        <div className="modal-dialog modal-sm" tabIndex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                                                                             <div className="modal-content">
                                                                                 <div className="modal-header">
                                                                                     <h4 className="modal-title">Employees List</h4>

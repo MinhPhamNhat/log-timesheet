@@ -107,7 +107,7 @@
         font-weight: 600;
     }
 }
-.dashboard-page {
+.dashboard-page, .add-edit-project-page {
     @import "../components/navbar/navbar-dropdowns.css";
     @import "../components/sidebar/sidebar-default.css";
 
