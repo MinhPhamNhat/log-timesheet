@@ -27,7 +27,6 @@ const Login = (props) => {
         }
         
         const res = await login(credentials)
-        console.log(res)
         if (res.code === SUCCESS) {
             enableRedirect(true)
         } else if (res.code === UNAUTHENTICATED) {
@@ -90,6 +89,6 @@ const mapDispatchToProps = (dispatch) => {
     return {
       login: (credentials) => dispatch(login(credentials)),
     }
-  }
+}
 
 export default connect(null, mapDispatchToProps)(Login)

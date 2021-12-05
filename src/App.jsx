@@ -14,6 +14,8 @@ import Subtask from './pages/Subtask';
 import User from './pages/User';
 import Error from './pages/404';
 
+import { connect } from 'react-redux'
+
 
 import './style/css/login.css'
 import './style/css/master.css'
@@ -28,7 +30,9 @@ import './style/vendor/datatables/datatables.min.css'
 import './style/vendor/airdatepicker/css/datepicker.min.css'
 import './style/vendor/mdtimepicker/mdtimepicker.min.css'
 
-function App() {
+function App(props) {
+  const { user } = props
+  const { loggedIn } = user
   return (
     <div className="App">
       <Router>
@@ -47,4 +51,8 @@ function App() {
   );
 }
 
-export default App;
+const mapStateToProps = (state) => ({
+  user: state.user,
+})
+
+export default connect(mapStateToProps, null)(App);

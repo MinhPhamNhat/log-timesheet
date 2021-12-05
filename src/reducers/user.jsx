@@ -3,8 +3,9 @@ import { authConstants } from '../constants'
 const { LOGIN_SUCCESS, LOGIN_FAILURE, LOGOUT } = authConstants
 
 const user = JSON.parse(localStorage.getItem('user'))
+const token = localStorage.getItem('token')
 
-const initialState = user
+const initialState = token
   ? { loggedIn: true, user }
   : { loggedIn: false, user: null }
 

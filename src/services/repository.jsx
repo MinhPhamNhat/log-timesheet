@@ -50,18 +50,16 @@ class Repository {
                 },
             })
             .then((res) => {
-                console.log(res)
                 return {
                     code: res.status,
                     message: res.statusText,
-                    data: res,
+                    data: res.data,
                 };
             })
             .catch((err) => {
-                console.log(err.response)
                 return {
                     code: err.response.status,
-                    message: err.response.message,
+                    message: err.response.data.message,
                     data: undefined,
                 };
             });
@@ -81,13 +79,13 @@ class Repository {
                 return {
                     code: res.status,
                     message: res.statusText,
-                    data: res,
+                    data: res.data,
                 };
             })
             .catch((err) => {
                 return {
                     code: err.response.status,
-                    message: err.response.message,
+                    message: err.response.data.message,
                     data: undefined,
                 };
             });
@@ -108,13 +106,13 @@ class Repository {
                 return {
                     code: res.status,
                     message: res.statusText,
-                    data: res,
+                    data: res.data,
                 };
             })
             .catch((err) => {
                 return {
                     code: err.response.status,
-                    message: err.response.message,
+                    message: err.response.data.message,
                     data: undefined,
                 };
             });
