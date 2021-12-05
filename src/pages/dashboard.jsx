@@ -1,6 +1,16 @@
 import React, {useEffect} from 'react';
 import {Sidebar} from '../components/general'
+
+import { Navigate } from 'react-router-dom'
+
+import { connect } from 'react-redux'
 const Dashboard = (props) => {
+    const { user } = props
+    const { loggedIn } = user
+    
+    if (!loggedIn) {
+        return <Navigate to="/login" />
+    }
     return (
         <div className="dashboard-page">
             <div className="wrapper">
@@ -534,4 +544,12 @@ const Dashboard = (props) => {
     )
 }
 
-export default (Dashboard)
+const mapDispatchToProps = (dispatch) => {
+    return {}
+}
+
+const mapStateToProps = (state) => ({
+    user: state.user,
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Dashboard)

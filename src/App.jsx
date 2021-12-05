@@ -12,7 +12,9 @@ import Project from './pages/Project';
 import Log from './pages/Log';
 import Subtask from './pages/Subtask';
 import User from './pages/User';
-import _404 from './pages/404';
+import Error from './pages/404';
+
+import { connect } from 'react-redux'
 
 
 import './style/css/login.css'
@@ -28,7 +30,9 @@ import './style/vendor/datatables/datatables.min.css'
 import './style/vendor/airdatepicker/css/datepicker.min.css'
 import './style/vendor/mdtimepicker/mdtimepicker.min.css'
 
-function App() {
+function App(props) {
+  const { user } = props
+  const { loggedIn } = user
   return (
     <div className="App">
       <Router>
@@ -40,11 +44,15 @@ function App() {
           <Route exact path="/log" element={<Log />} />
           <Route exact path="/subtask" element={<Subtask />} />
           <Route exact path="/user" element={<User />} />
-          <Route exact path="/404" element={<_404 />} />
+          <Route exact path="/error" element={<Error />} />
         </Routes>
       </Router>
     </div>
   );
 }
 
-export default App;
+const mapStateToProps = (state) => ({
+  user: state.user,
+})
+
+export default connect(mapStateToProps, null)(App);
