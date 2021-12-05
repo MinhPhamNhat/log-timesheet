@@ -50,6 +50,7 @@ class Repository {
                 },
             })
             .then((res) => {
+                console.log(res)
                 return {
                     code: res.status,
                     message: res.statusText,
@@ -57,6 +58,7 @@ class Repository {
                 };
             })
             .catch((err) => {
+                console.log(err.response)
                 return {
                     code: err.response.status,
                     message: err.response.message,

@@ -1,6 +1,6 @@
 import React from 'react'
 
-const _404 = (props) => {
+const Error = (props) => {
     return (
         <div className="404-page">
             <div className="wrapper">
@@ -22,4 +22,4 @@ const _404 = (props) => {
     )
 }
 
-export default (_404)
+export default (Error)

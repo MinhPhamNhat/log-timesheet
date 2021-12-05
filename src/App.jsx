@@ -12,7 +12,7 @@ import Project from './pages/Project';
 import Log from './pages/Log';
 import Subtask from './pages/Subtask';
 import User from './pages/User';
-import _404 from './pages/404';
+import Error from './pages/404';
 
 
 import './style/css/login.css'
@@ -40,7 +40,7 @@ function App() {
           <Route exact path="/log" element={<Log />} />
           <Route exact path="/subtask" element={<Subtask />} />
           <Route exact path="/user" element={<User />} />
-          <Route exact path="/404" element={<_404 />} />
+          <Route exact path="/error" element={<Error />} />
         </Routes>
       </Router>
     </div>

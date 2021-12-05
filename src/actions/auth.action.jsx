@@ -1,18 +1,18 @@
-import { authConstants, exceptionConstants } from '../constants'
-import { AuthService } from '../services'
+import { authConstants, exceptionConstants, userConstants } from '../constants'
+import { UserService } from '../services'
 
 const { LOGIN_SUCCESS, LOGIN_FAILURE, LOGOUT } = authConstants
+const { VERIFY_USER_TOKEN } = userConstants
 
-const { CHANGE_PASSWORD_FIRST_TIME, VERIFY_USER_TOKEN } = userConstants
 const { UNAUTHENTICATED, SUCCESS } = exceptionConstants
 
 export const login = (credentials) => {
   return async function (dispatch) {
-    const response = await AuthService.login(credentials)
+    const response = await UserService.login(credentials)
     const { code, data } = response
     await dispatch(checkAuthentication(code))
-    if (code === SUCCESS && data.user && data.access_token) {
-      localStorage.setItem('token', data.access_token)
+    if (code === SUCCESS && data.user && data.token) {
+      localStorage.setItem('token', data.token)
       localStorage.setItem('user', JSON.stringify(data.user))
       dispatch({
         type: LOGIN_SUCCESS,
@@ -26,5 +26,21 @@ export const login = (credentials) => {
       })
     }
     return response
+  }
+}
+
+export const checkAuthentication = (code) => {
+  return function (dispatch) {
+    if (code === UNAUTHENTICATED) {
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
+      dispatch({
+        type: VERIFY_USER_TOKEN,
+        payload: {
+          loggedIn: false,
+          user: null,
+        },
+      })
+    }
   }
 }
