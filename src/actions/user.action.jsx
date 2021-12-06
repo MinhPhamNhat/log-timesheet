@@ -11,23 +11,6 @@ export const getManager = () => {
 
     const response = await UserService.getManager()
     const { code, data } = response
-    await dispatch(checkAuthentication(code))
     return response
   }
 }
-
-export const checkAuthentication = (code) => {
-    return function (dispatch) {
-      if (code === UNAUTHENTICATED) {
-        localStorage.removeItem('token')
-        localStorage.removeItem('user')
-        dispatch({
-          type: VERIFY_USER_TOKEN,
-          payload: {
-            loggedIn: false,
-            user: null,
-          },
-        })
-      }
-    }
-  }
