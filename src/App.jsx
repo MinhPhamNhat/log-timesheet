@@ -29,6 +29,7 @@ import './style/components/sidebar/sidebar-default.css'
 import './style/vendor/datatables/datatables.min.css'
 import './style/vendor/airdatepicker/css/datepicker.min.css'
 import './style/vendor/mdtimepicker/mdtimepicker.min.css'
+import 'react-notifications/lib/notifications.css';
 
 function App(props) {
   const { user } = props
