@@ -1,6 +1,12 @@
 import React from 'react'
+import { exceptionConstants } from '../constants'
 
+const { BAD_REQUEST, SERVER_ERROR, PAGE_NOT_FOUND } = exceptionConstants
 const Error = (props) => {
+    const { message, code } = props
+    switch (code === PAGE_NOT_FOUND){
+        
+    }
     return (
         <div className="404-page">
             <div className="wrapper">

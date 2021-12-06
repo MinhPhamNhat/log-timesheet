@@ -1,11 +1,13 @@
 import { combineReducers } from 'redux'
 import user from './user'
+import project from './project'
 import { authConstants } from '../constants'
 
 const { LOGOUT } = authConstants
 
 const appReducer = combineReducers({
   user,
+  project,
 })
 
 const rootReducer = (state, action) => {

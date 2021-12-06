@@ -54,6 +54,7 @@ const Subtask = (props) => {
                             <div className="page-title">
                                 <h3>Sub Task
                                     <a href="add_edit_project.html" className="btn btn-sm btn-outline-primary float-end"><i className="fas fa-plus-circle"></i> Add</a>
+                                    <a href="add" className="btn btn-sm btn-outline-primary float-end"><i className="fas fa-plus-circle"></i> Add</a>
                                     <a href="dashboard.html" className="btn btn-sm btn-outline-info float-end me-1"><i className="fas fa-angle-left"></i> <span className="btn-header">Return</span></a>
                                 </h3>
                             </div>
