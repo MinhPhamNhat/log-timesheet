@@ -32,7 +32,7 @@ const FormHandleProject = (props) => {
         console.log(res)
         switch(res.code){
             case SUCCESS:
-                setRedirect(true)
+                NotificationManager.success('Update successfully', 'Success',  3000);
                 break;
             case BAD_REQUEST:
                 NotificationManager.warning(res.message, 'Bad Request',  3000);
@@ -56,6 +56,10 @@ const FormHandleProject = (props) => {
             setManagerList(user.managers)
         }
     }, [project])
+    
+    const back = () => {
+        setRedirect(true)
+    }
     if (redirect){
         return <Navigate to="/project" />
     }
@@ -180,7 +184,7 @@ const FormHandleProject = (props) => {
                                             <div className="line"></div><br/>
                                             <div className="mb-3 row">
                                                 <div className="col-sm-4 offset-sm-2">
-                                                    <button className="btn btn-secondary mb-2"><i className="fas fa-times"></i> Cancel</button>
+                                                    <button onClick={()=>back()}  className="btn btn-secondary mb-2"><i className="fas fa-times"></i> Cancel</button>
                                                     <button onClick={()=>handleSubmit()} className="btn btn-primary mb-2"><i className="fas fa-save"></i> Save</button>
                                                 </div>
                                             </div>

@@ -2,17 +2,20 @@ import React, { useState, useEffect, } from 'react';
 import { Navigate, } from 'react-router-dom'
 import { connect } from 'react-redux'
 import {Sidebar} from '../components/general'
-import { SubtaskAddForm } from '../components/subtask'
-import { getAllProjects, addSubtask } from '../actions'
+import { SubtaskEditForm } from '../components/subtask'
+import { getAllProjects, editSubtask, getSubtaskById } from '../actions'
 import { exceptionConstants } from '../constants'
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 const AddSubtask = (props) => {
-    const { getAllProjects, user, addSubtask } = props
+    const { getAllProjects, user, editSubtask, getSubtaskById } = props
     const { loggedIn } = user
 
+    const query = new URLSearchParams(window.location.search)
+    const id = query.get('id')
     useEffect(async ()=>{
         await getAllProjects()
+        await getSubtaskById(id)
     }, [])
 
     if (!loggedIn) {
@@ -76,7 +79,7 @@ const AddSubtask = (props) => {
                                     <div className="card">
                                         <div className="card-header">Add</div>
 
-                                            <SubtaskAddForm addSubtask={addSubtask} />
+                                            <SubtaskEditForm editSubtask={editSubtask} id={id}/>
                                     </div>
                                 </div>
                             </div>
@@ -92,7 +95,8 @@ const AddSubtask = (props) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         getAllProjects: () => dispatch(getAllProjects()),
-        addSubtask: (data) => dispatch(addSubtask(data))
+        editSubtask: (id, data) => dispatch(editSubtask(id, data)),
+        getSubtaskById: (id) => dispatch(getSubtaskById(id))
     }
 }
 

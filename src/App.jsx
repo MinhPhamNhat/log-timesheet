@@ -9,7 +9,9 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Project from './pages/Project';
 import Add from './pages/Add';
+import AddSubtask from './pages/AddSubtask';
 import Edit from './pages/Edit';
+import EditSubtask from './pages/EditSubtask';
 import Log from './pages/Log';
 import Subtask from './pages/Subtask';
 import User from './pages/User';
@@ -42,7 +44,9 @@ function App(props) {
           <Route exact path="/login" element={<Login />} />
           <Route exact path="/" element={<Dashboard />} />
           <Route exact path="/add" element={<Add />} />
+          <Route exact path="/add-subtask" element={<AddSubtask />} />
           <Route exact path="/edit" element={<Edit />} />
+          <Route exact path="/edit-subtask" element={<EditSubtask />} />
           <Route exact path="/project" element={<Project />} />
           <Route exact path="/log" element={<Log />} />
           <Route exact path="/subtask" element={<Subtask />} />

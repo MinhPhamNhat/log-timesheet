@@ -49,6 +49,9 @@ const Add = (props) => {
                 break;
         }
     }
+    const back = () => {
+        setRedirect(true)
+    }
     if (!loggedIn) {
         return <Navigate to="/login" />
     }
@@ -176,7 +179,7 @@ const Add = (props) => {
                                             <div className="line"></div><br/>
                                             <div className="mb-3 row">
                                                 <div className="col-sm-4 offset-sm-2">
-                                                    <button className="btn btn-secondary mb-2"><i className="fas fa-times"></i> Cancel</button>
+                                                    <button onClick={()=>back()} className="btn btn-secondary mb-2"><i className="fas fa-times"></i> Cancel</button>
                                                     <button onClick={()=>handleSubmit()} className="btn btn-primary mb-2"><i className="fas fa-save"></i> Save</button>
                                                 </div>
                                             </div>
