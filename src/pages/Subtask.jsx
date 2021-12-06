@@ -1,6 +1,50 @@
-import React from 'react'
-import {Sidebar} from '../components/general'
+import React, { useState, useEffect, } from 'react';
+import { Sidebar } from '../components/general'
+import { Navigate, } from 'react-router-dom'
+import { connect } from 'react-redux'
+import { getAllSubtask, deleteSubtask } from '../actions'
+import { Button, Modal } from 'react-bootstrap'
+import { exceptionConstants } from '../constants'
+import { NotificationContainer, NotificationManager } from 'react-notifications';
+const { SUCCESS, PAGE_NOT_FOUND } = exceptionConstants
 const Subtask = (props) => {
+    const { user, subtask, getAllSubtask, deleteSubtask } = props
+    const { loggedIn } = user
+    const [subtasks, setSubtasks] = useState([])
+    const [show, setShow] = useState(false);
+    const [currId, setCurrId] = useState(null)
+    const [redirect, setRedirect] = useState(false)
+    const handleClose = () => setShow(false);
+    const handleShow = (id) => {
+        setCurrId(id)
+        setShow(true)
+    };
+    const handleSave = async () => {
+        setShow(false)
+        const res = await deleteSubtask(currId)
+        if (res.code === PAGE_NOT_FOUND){
+            NotificationManager.error(res.message, 'Subtask notfound',  3000);
+        }else{
+            setRedirect(true)
+        }
+    }
+
+    useEffect(async ()=>{
+        await getAllSubtask()
+    }, [])
+
+    useEffect(()=>{
+        if (subtask.code === SUCCESS){
+            setSubtasks(subtask.subtasks||[])
+        }
+    }, [subtask])
+    
+    if (!loggedIn) {
+        return <Navigate to="/login" />
+    }
+    if (redirect){
+        return <Navigate to="/subtask" />
+    }
     return (
         <div className="subtask-page">
             <div className="wrapper">
@@ -53,8 +97,8 @@ const Subtask = (props) => {
                         <div className="container">
                             <div className="page-title">
                                 <h3>Sub Task
-                                    <a href="add_edit_project.html" className="btn btn-sm btn-outline-primary float-end"><i className="fas fa-plus-circle"></i> Add</a>
-                                    <a href="dashboard.html" className="btn btn-sm btn-outline-info float-end me-1"><i className="fas fa-angle-left"></i> <span className="btn-header">Return</span></a>
+                                    <a href="add-subtask" className="btn btn-sm btn-outline-primary float-end"><i className="fas fa-plus-circle"></i> Add</a>
+                                    <a href="/" className="btn btn-sm btn-outline-info float-end me-1"><i className="fas fa-angle-left"></i> <span className="btn-header">Return</span></a>
                                 </h3>
                             </div>
                             <div className="box box-primary">
@@ -65,63 +109,27 @@ const Subtask = (props) => {
                                                 <th>Sub Task Id</th>
                                                 <th>Sub Task Name</th>
                                                 <th>Project</th>
-                                                <th>User logs</th>
+                                                <th>Logs</th>
                                                 <th></th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td>1</td>
-                                                <td>Social Website api</td>
-                                                <td>Social Website</td>
-                                                <td>
-                                                    <select name="" className="form-select">
-                                                        <option value="">user 1</option>
-                                                        <option value="">user 2</option>
-                                                        <option value="">user 3</option>
-                                                        <option value="">user 4</option>
-                                                    </select>
-                                                </td>
-
-                                                <td className="text-end">
-                                                    <a href="add_edit_project.html" className="btn btn-outline-info btn-rounded"><i className="fas fa-pen"></i></a>
-                                                    <a href="" className="btn btn-outline-danger btn-rounded"><i className="fas fa-trash"></i></a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>2</td>
-                                                <td>Social Website 1</td>
-                                                <td>Social Website</td>
-                                                <td>
-                                                    <select name="" className="form-select">
-                                                        <option value="">user 1</option>
-                                                        <option value="">user 2</option>
-                                                        <option value="">user 3</option>
-                                                        <option value="">user 4</option>
-                                                    </select>
-                                                </td>
-                                                <td className="text-end">
-                                                    <a href="add_edit_project.html" className="btn btn-outline-info btn-rounded"><i className="fas fa-pen"></i></a>
-                                                    <a href="" className="btn btn-outline-danger btn-rounded"><i className="fas fa-trash"></i></a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>3</td>
-                                                <td>Social Website 2</td>
-                                                <td>Social Website</td>
-                                                <td>
-                                                    <select name="" className="form-select">
-                                                        <option value="">user 1</option>
-                                                        <option value="">user 2</option>
-                                                        <option value="">user 3</option>
-                                                        <option value="">user 4</option>
-                                                    </select>
-                                                </td>
-                                                <td className="text-end">
-                                                    <a href="add_edit_project.html" className="btn btn-outline-info btn-rounded"><i className="fas fa-pen"></i></a>
-                                                    <a href="" className="btn btn-outline-danger btn-rounded"><i className="fas fa-trash"></i></a>
-                                                </td>
-                                            </tr>
+                                            {subtasks.map(s=>{
+                                                return (
+                                                <tr>
+                                                    <td>{s.SubtaskId}</td>
+                                                    <td>{s.Name}</td>
+                                                    <td>{s.Project.Name}</td>
+                                                    <td>{s.Logs.length}</td>
+    
+                                                    <td className="text-end">
+                                                        <a href={"edit-subtask?id="+s.SubtaskId} className="btn btn-outline-info btn-rounded"><i className="fas fa-pen"></i></a>
+                                                        <Button variant="outline-danger" onClick={()=>handleShow(s.SubtaskId)}>
+                                                            <i className="fas fa-trash"></i>
+                                                        </Button>
+                                                    </td>
+                                                </tr>)
+                                            })}
                                         </tbody>
                                     </table>
                                 </div>
@@ -130,8 +138,36 @@ const Subtask = (props) => {
                     </div>
                 </div>
             </div>
+            <NotificationContainer/>
+            <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                <Modal.Title>Remove subtask</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>Do you want to remove this subtask ? </Modal.Body>
+                <Modal.Footer>
+                <Button variant="secondary" onClick={handleClose}>
+                    Close
+                </Button>
+                <Button variant="danger" onClick={handleSave}>
+                    Delete
+                </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     )
 }
 
-export default (Subtask)
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        getAllSubtask: () => dispatch(getAllSubtask()),
+        deleteSubtask: (id) => dispatch(deleteSubtask(id)),
+    }
+}
+
+const mapStateToProps = (state) => ({
+    user: state.user,
+    subtask: state.subtask
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Subtask)

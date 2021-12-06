@@ -2,7 +2,7 @@ import { authConstants, userConstants } from "../constants";
 
 const { LOGIN_SUCCESS, LOGIN_FAILURE, LOGOUT } = authConstants;
 
-const { VERIFY_USER_TOKEN } = userConstants;
+const { VERIFY_USER_TOKEN, GET_MANAGER } = userConstants;
 
 const userAuth = JSON.parse(localStorage.getItem("user"));
 const token = localStorage.getItem("token");
@@ -29,16 +29,22 @@ const user = (state = initialState, action) => {
       return {
         loggedIn: false,
         user: null,
-      };
+      }
+    case GET_MANAGER:
+      return {
+        ...state,
+        code: action.payload.code,
+        managers: action.payload.managers,
+      }
     case VERIFY_USER_TOKEN:
       return {
         ...state,
         loggedIn: action.payload.loggedIn,
         user: action.payload.user,
-      };
+      }
     default:
-      return state;
+      return state
   }
-};
+}
 
-export default user;
+export default user
