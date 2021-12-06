@@ -7,7 +7,6 @@ import { connect } from 'react-redux'
 const Dashboard = (props) => {
     const { user } = props
     const { loggedIn } = user
-    
     if (!loggedIn) {
         return <Navigate to="/login" />
     }

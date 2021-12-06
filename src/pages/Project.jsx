@@ -1,7 +1,23 @@
-import React from 'react'
-import {Sidebar} from '../components/general'
+import React, { useState, useEffect } from 'react'
+import { Sidebar } from '../components/general'
+import { Navigate } from 'react-router-dom'
+import { connect } from 'react-redux'
+import { getAllProjects } from '../actions'
 
-const Project = (props) => {
+
+const Project =  (props) => {
+    const { user, getAllProjects } = props
+    const { loggedIn } = user
+    const [projectRes, setProjectRes] = useState([])
+
+    useEffect(async () => {
+        setProjectRes(await getAllProjects());
+      }, []);
+
+    if (!loggedIn) {
+        return <Navigate to="/login" />
+    }
+
     return (
         <div className="project-page">
             <div className="wrapper">
@@ -54,8 +70,8 @@ const Project = (props) => {
                         <div className="container">
                             <div className="page-title">
                                 <h3>Projects
-                                    <a href="add_edit_project.html" className="btn btn-sm btn-outline-primary float-end"><i className="fas fa-plus-circle"></i> Add</a>
-                                    <a href="dashboard.html" className="btn btn-sm btn-outline-info float-end me-1"><i className="fas fa-angle-left"></i> <span className="btn-header">Return</span></a>
+                                    <a href="add-edit-project" className="btn btn-sm btn-outline-primary float-end"><i className="fas fa-plus-circle"></i> Add</a>
+                                    <a href="/" className="btn btn-sm btn-outline-info float-end me-1"><i className="fas fa-angle-left"></i> <span className="btn-header">Return</span></a>
                                 </h3>
                             </div>
                             <div className="box box-primary">
@@ -76,52 +92,25 @@ const Project = (props) => {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td>1</td>
-                                                <td>Social Website</td>
-                                                <td>123</td>
-                                                <td>Web</td>
-                                                <td>20/08/2021</td>
-                                                <td>12/08/2021</td>
-                                                <td>13/08/2021</td>
-                                                <td>Nam</td>
-                                                <td>10</td>
-                                                <td className="text-end">
-                                                    <a href="add_edit_project.html" className="btn btn-outline-info btn-rounded"><i className="fas fa-pen"></i></a>
-                                                    <a href="" className="btn btn-outline-danger btn-rounded"><i className="fas fa-trash"></i></a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>1</td>
-                                                <td>Social Website</td>
-                                                <td>123</td>
-                                                <td>Web</td>
-                                                <td>20/08/2021</td>
-                                                <td>12/08/2021</td>
-                                                <td>13/08/2021</td>
-                                                <td>Nam</td>
-                                                <td>10</td>
-                                                <td className="text-end">
-                                                    <a href="add_edit_project.html" className="btn btn-outline-info btn-rounded"><i className="fas fa-pen"></i></a>
-                                                    <a href="" className="btn btn-outline-danger btn-rounded"><i className="fas fa-trash"></i></a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>1</td>
-                                                <td>Social Website</td>
-                                                <td>123</td>
-                                                <td>Web</td>
-                                                <td>20/08/2021</td>
-                                                <td>12/08/2021</td>
-                                                <td>13/08/2021</td>
-                                                <td>Nam</td>
-                                                <td>10</td>
-                                                <td className="text-end">
-                                                    <a href="add_edit_project.html" className="btn btn-outline-info btn-rounded"><i className="fas fa-pen"></i></a>
-                                                    <a href="" className="btn btn-outline-danger btn-rounded"><i className="fas fa-trash"></i></a>
-                                                </td>
-                                            </tr>
-
+                                            {projectRes.data?projectRes.data.data.map(p => {
+                                                return (
+                                                    <tr>
+                                                        <td>{p.ProjectId}</td>
+                                                        <td>{p.Name}</td>
+                                                        <td>{p.ProjectCode}</td>
+                                                        <td>{p.Type?'Default':'None'}</td>
+                                                        <td>{new Date(p.InitTime).toLocaleString()}</td>
+                                                        <td>{new Date(p.StartDate).toLocaleString()}</td>
+                                                        <td>{new Date(p.EndDate).toLocaleString()}</td>
+                                                        <td>{p.Manager?p.Manager.Name:'Không'}</td>
+                                                        <td>{p.ProjectUsers.length}</td>
+                                                        <td className="text-end">
+                                                            <a href="add_edit_project.html" className="btn btn-outline-info btn-rounded"><i className="fas fa-pen"></i></a>
+                                                            <a href="" className="btn btn-outline-danger btn-rounded"><i className="fas fa-trash"></i></a>
+                                                        </td>
+                                                    </tr>
+                                                    )
+                                            }):''}
                                         </tbody>
                                     </table>
                                 </div>
@@ -134,4 +123,15 @@ const Project = (props) => {
     )
 }
 
-export default (Project)
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+      getAllProjects: () => dispatch(getAllProjects()),
+    }
+}
+
+const mapStateToProps = (state) => ({
+    user: state.user,
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Project)
