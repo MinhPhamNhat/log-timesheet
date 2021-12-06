@@ -1,72 +1,72 @@
-import {  exceptionConstants, userConstants, projectConstants } from '../constants'
-import { ProjectService } from '../services'
+import {  exceptionConstants, userConstants, subtaskConstants } from '../constants'
+import { SubtaskService } from '../services'
 
 const { VERIFY_USER_TOKEN } = userConstants
-const { CURR_PROJECT, GET_ALL } = projectConstants
+const { GET_ALL_SUBTASK, GET_SUBTASK_BY_ID  } = subtaskConstants
 const { UNAUTHENTICATED, SUCCESS } = exceptionConstants
 
-export const getAllProjects = () => {
+export const getAllSubtask = () => {
   return async function (dispatch) {
-    const response = await ProjectService.getAll()
+    const response = await SubtaskService.getAll()
     const { code, data } = response
     await dispatch(checkAuthentication(code))
     if (code == SUCCESS)
     dispatch({
-      type: GET_ALL,
+      type: GET_ALL_SUBTASK,
       payload: {
         code,
-        projects: data.data
+        subtasks: data.data
       }
     })
     return response
   }
 }
 
-export const addProject = (payload) => {
+export const addSubtask = (payload) => {
     return async function (dispatch) {
-      const response = await ProjectService.addProject(payload)
+      const response = await SubtaskService.addSubtask(payload)
       const { code, data } = response
       await dispatch(checkAuthentication(code))
       return response
     }
 }
 
-export const editProject = (id, payload) => {
+export const editSubtask = (id, payload) => {
     return async function (dispatch) {
-        const response = await ProjectService.editProject(id, payload)
+        const response = await SubtaskService.editSubtask(id, payload)
         const { code, data } = response
         await dispatch(checkAuthentication(code))
         return response
     }
 }
 
-export const deleteProject = (id) => {
+export const deleteSubtask = (id) => {
     return async function (dispatch) {
-        const response = await ProjectService.deleteProject(id)
+        const response = await SubtaskService.deleteSubtask(id)
         const { code, data } = response
         await dispatch(checkAuthentication(code))
         return response
     }
 }
 
-export const getProjectById = (id) => {
+export const getSubtaskById = (id) => {
     return async function (dispatch) {
-        const response = await ProjectService.getProjectById(id)
+        const response = await SubtaskService.getSubtaskById(id)
         const { code, data } = response
         await dispatch(checkAuthentication(code))
         if (code === SUCCESS){
             dispatch({
-                type: CURR_PROJECT,
+                type: GET_SUBTASK_BY_ID,
                 payload: {
-                    newProject: data.data,
+                    subtask: data.data,
                     code
                 }
             })
         }else{
             dispatch({
-                type: CURR_PROJECT,
+                type: GET_SUBTASK_BY_ID,
                 payload: {
-                    newProject: null,
+                    subtask: null,
                     code
                 }
         })

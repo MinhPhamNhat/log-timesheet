@@ -1,6 +1,6 @@
 import { projectConstants } from '../constants'
 
-const { CURR_PROJECT } = projectConstants
+const { CURR_PROJECT, GET_ALL } = projectConstants
 
 const initialState = { newProject: null, code: null }
 
@@ -10,6 +10,12 @@ const initialState = { newProject: null, code: null }
         return {
           ...state,
           project: action.payload.newProject,
+          code: action.payload.code
+        }
+      case GET_ALL:
+        return {
+          ...state,
+          projects: action.payload.projects,
           code: action.payload.code
         }
       default:
