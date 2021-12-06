@@ -7,8 +7,9 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
-import AddEditProject from './pages/AddEditProject';
 import Project from './pages/Project';
+import Add from './pages/Add';
+import Edit from './pages/Edit';
 import Log from './pages/Log';
 import Subtask from './pages/Subtask';
 import User from './pages/User';
@@ -40,7 +41,8 @@ function App(props) {
         <Routes>
           <Route exact path="/login" element={<Login />} />
           <Route exact path="/" element={<Dashboard />} />
-          <Route exact path="/add-edit-project" element={<AddEditProject />} />
+          <Route exact path="/add" element={<Add />} />
+          <Route exact path="/edit" element={<Edit />} />
           <Route exact path="/project" element={<Project />} />
           <Route exact path="/log" element={<Log />} />
           <Route exact path="/subtask" element={<Subtask />} />

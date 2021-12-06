@@ -2,18 +2,40 @@ import React, { useState, useEffect } from 'react'
 import { Sidebar } from '../components/general'
 import { Navigate } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { getAllProjects } from '../actions'
-
+import { getAllProjects, deleteProject } from '../actions'
+import { Button, Modal } from 'react-bootstrap'
+import { NotificationContainer, NotificationManager } from 'react-notifications';
+import { exceptionConstants } from '../constants'
+const { BAD_REQUEST, SERVER_ERROR, PAGE_NOT_FOUND, SUCCESS } = exceptionConstants
 
 const Project =  (props) => {
-    const { user, getAllProjects } = props
+    const { user, getAllProjects, deleteProject } = props
     const { loggedIn } = user
     const [projectRes, setProjectRes] = useState([])
-
+    const [show, setShow] = useState(false);
+    const [currId, setCurrId] = useState(null)
+    const [redirect, setRedirect] = useState(false)
+    const handleClose = () => setShow(false);
+    const handleShow = (id) => {
+        setCurrId(id)
+        setShow(true)
+    };
+    const handleSave = async () => {
+        setShow(false)
+        const res = await deleteProject(currId)
+        if (res.code === PAGE_NOT_FOUND){
+            NotificationManager.error(res.message, 'Project notfound',  3000);
+        }else{
+            setRedirect(true)
+        }
+    }
     useEffect(async () => {
         setProjectRes(await getAllProjects());
       }, []);
 
+    if (redirect){
+        return <Navigate to="/project" />
+    }
     if (!loggedIn) {
         return <Navigate to="/login" />
     }
@@ -70,7 +92,7 @@ const Project =  (props) => {
                         <div className="container">
                             <div className="page-title">
                                 <h3>Projects
-                                    <a href="add-edit-project" className="btn btn-sm btn-outline-primary float-end"><i className="fas fa-plus-circle"></i> Add</a>
+                                    <a href="add" className="btn btn-sm btn-outline-primary float-end"><i className="fas fa-plus-circle"></i> Add</a>
                                     <a href="/" className="btn btn-sm btn-outline-info float-end me-1"><i className="fas fa-angle-left"></i> <span className="btn-header">Return</span></a>
                                 </h3>
                             </div>
@@ -105,8 +127,10 @@ const Project =  (props) => {
                                                         <td>{p.Manager?p.Manager.Name:'Không'}</td>
                                                         <td>{p.ProjectUsers.length}</td>
                                                         <td className="text-end">
-                                                            <a href="add_edit_project.html" className="btn btn-outline-info btn-rounded"><i className="fas fa-pen"></i></a>
-                                                            <a href="" className="btn btn-outline-danger btn-rounded"><i className="fas fa-trash"></i></a>
+                                                            <a href={"/edit?id="+p.ProjectId} className="btn btn-outline-info btn-rounded"><i className="fas fa-pen"></i></a>
+                                                            <Button variant="outline-danger" onClick={()=>handleShow(p.ProjectId)}>
+                                                                <i className="fas fa-trash"></i>
+                                                            </Button>
                                                         </td>
                                                     </tr>
                                                     )
@@ -119,6 +143,21 @@ const Project =  (props) => {
                     </div>
                 </div>
             </div>
+            <NotificationContainer/>
+            <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                <Modal.Title>Remove project</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>Do you want to remove this project ? </Modal.Body>
+                <Modal.Footer>
+                <Button variant="secondary" onClick={handleClose}>
+                    Close
+                </Button>
+                <Button variant="danger" onClick={handleSave}>
+                    Delete
+                </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     )
 }
@@ -127,6 +166,7 @@ const Project =  (props) => {
 const mapDispatchToProps = (dispatch) => {
     return {
       getAllProjects: () => dispatch(getAllProjects()),
+      deleteProject: (id) => dispatch(deleteProject(id)),
     }
 }
 
