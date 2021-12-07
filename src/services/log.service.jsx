@@ -7,9 +7,9 @@ class LogService {
         return response
     }
 
-    async createLogs() {
+    async createLogs(credentials) {
         const endpoint = '/Logs'
-        const response = await Repository.post(endpoint)
+        const response = await Repository.post(endpoint, credentials)
         return response
     }
 

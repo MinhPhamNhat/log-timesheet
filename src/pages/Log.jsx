@@ -5,21 +5,28 @@ import { connect } from "react-redux";
 import { Navigate } from "react-router-dom";
 import { exceptionConstants } from "../constants";
 import { Button, Modal } from 'react-bootstrap'
-import { getAllLogs, getAllProjects, getAllSubtask, getAllUsers, approveLog, disapproveLog } from '../actions'
+import { getAllLogs, getAllSubtask, approveLog, disapproveLog } from '../actions'
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 
-import { Error } from '../pages'
+import { Error } from "../pages";
+import { LogService } from "../services";
 
-const { UNAUTHENTICATED, SUCCESS, PAGE_NOT_FOUND, SERVER_ERROR } = exceptionConstants;
+const { UNAUTHENTICATED, SUCCESS, PAGE_NOT_FOUND, SERVER_ERROR, CREATED } = exceptionConstants;
 const Log = (props) => {
-  const { getAllLogs, getAllProjects, getAllSubtask, getAllUsers, log, project, subtask, user, approveLog, disapproveLog } = props
+  const { getAllLogs, getAllSubtask, log, subtask, user, approveLog, disapproveLog } = props
   const role = parseRole(user.user.Role)
   const [logList, setLogList] = useState([])
-  const [userList, setUserList] = useState([])
-  const [projectList, setProjectList] = useState([])
   const [subtaskList, setSubtaskList] = useState([])
   const [isShowErrorPage, enableShowError] = useState(false)
   const [redirect, setRedirect] = useState(false)
+
+  const userAuth = JSON.parse(localStorage.getItem("user"));
+
+  const [note, setNote] = useState("")
+  const [stdTime, setStdTime] = useState(0)
+  const [overTime, setOverTime] = useState(0)
+  const [subtaskId, setSubtaskId] = useState(null)
+
 
   const handleApprove = async (id) => {
     const res = await approveLog(id)
@@ -35,45 +42,55 @@ const Log = (props) => {
   }
 
   useEffect(async () => {
-    await getAllLogs()
-    await getAllProjects()
-    await getAllSubtask()
-    await getAllUsers()
-  }, [])
+    await getAllLogs();
+    await getAllSubtask();
+  }, []);
 
   useEffect(async () => {
     if (log.code == SUCCESS) {
-      console.log(log)
-      setLogList(log.logList)
-    }
-
-    if (project.code == SUCCESS) {
-      console.log(project.projects)
-      setProjectList(project.projects)
+      setLogList(log.logList);
     }
 
     if (subtask.code == SUCCESS) {
-      console.log(subtask.subtasks)
-      setSubtaskList(subtask.subtasks)
+      setSubtaskList(subtask.subtasks);
     }
 
-    if (user.code == SUCCESS) {
-      console.log(user.users)
-      setUserList(user.users)
+    if (log.code == UNAUTHENTICATED || subtask.code == UNAUTHENTICATED) {
+      enableShowError(true);
     }
+  }, [log.logList, subtask.subtasks]);
 
-    if (log.code == UNAUTHENTICATED || project.code == UNAUTHENTICATED || subtask.code == UNAUTHENTICATED || user.code == UNAUTHENTICATED) {
-      enableShowError(true)
+  const handleSubmitLog = async () => {
+    const credentials = {
+      Note: note,
+      Stdtime: stdTime,
+      Overtime: overTime,
+      SubtaskId: subtaskId,
+      DateLog: (new Date()).toLocaleString("en-US"),
+    };
+
+    const res = await LogService.createLogs(credentials);
+    if (res.code === CREATED) {
+      await getAllLogs();
+    } else if (res.code === UNAUTHENTICATED) {
+      return <Navigate to="/login" />;
+    } else {
+      return (
+        // <_404 status={exceptionStatus.code} message={exceptionStatus.message} />
+        <Error />
+      );
     }
-
-  }, [log.logList, project.projects, subtask.subtasks, user.users])
-
-  if (isShowErrorPage) {
-    return <Navigate to="/" />
   }
   if (redirect) {
     setRedirect(false)
     return <Navigate to="/log" />
+  }
+
+  if (isShowErrorPage) {
+    return (
+      // <_404 status={exceptionStatus.code} message={exceptionStatus.message} />
+      <Error />
+    );
   }
 
 
@@ -253,6 +270,9 @@ const Log = (props) => {
                                           type="text"
                                           name=""
                                           className="form-control"
+                                          onChange={(e) =>
+                                            setNote(e.target.value)
+                                          }
                                         ></textarea>
                                       </div>
                                     </div>
@@ -260,23 +280,9 @@ const Log = (props) => {
                                       <label className="col-md-2">User</label>
                                       <div className="col-md-10 select">
                                         <select name="" className="form-select">
-                                          <option value="">User 1</option>
-                                          <option value="">User 2</option>
-                                          <option value="">User 3</option>
-                                          <option value="">User 4</option>
-                                        </select>
-                                      </div>
-                                    </div>
-                                    <div className="mb-3 row">
-                                      <label className="col-md-2">
-                                        Project
-                                      </label>
-                                      <div className="col-md-10 select">
-                                        <select name="" className="form-select">
-                                          <option value="">project 1</option>
-                                          <option value="">project 2</option>
-                                          <option value="">project 3</option>
-                                          <option value="">project 4</option>
+                                          <option value={userAuth.UserId}>
+                                            {userAuth.Name}
+                                          </option>
                                         </select>
                                       </div>
                                     </div>
@@ -285,57 +291,24 @@ const Log = (props) => {
                                         Sub Task
                                       </label>
                                       <div className="col-md-10 select">
-                                        <select name="" className="form-select">
-                                          <option value="">sub task 1</option>
-                                          <option value="">sub task 2</option>
-                                          <option value="">sub task 3</option>
-                                          <option value="">sub task 4</option>
+                                        <select
+                                          name=""
+                                          className="form-select"
+                                          onChange={(e) =>
+                                            setSubtaskId(e.target.value)
+                                          }
+                                        >
+                                          {subtaskList.map((s) => {
+                                            return (
+                                              <option
+                                                value={s.SubtaskId}
+                                                selected
+                                              >
+                                                {s.Name}
+                                              </option>
+                                            );
+                                          })}
                                         </select>
-                                      </div>
-                                    </div>
-                                    <div className="mb-3 row">
-                                      <div className="col-md-2 col-lg-2">
-                                        Date
-                                      </div>
-                                      <div className="col-lg-3 col-md-3">
-                                        <div>
-                                          <div className="">
-                                            <input
-                                              type="text"
-                                              className="form-control datepicker-here"
-                                              data-language="en"
-                                              aria-describedby="datepicker"
-                                              placeholder="Date picker"
-                                            />
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-
-                                    <div className="mb-3 row">
-                                      <div className="col-md-2 col-lg-2">
-                                        From
-                                      </div>
-                                      <div className="col-lg-3 col-md-3">
-                                        <div>
-                                          <input
-                                            type="time"
-                                            id="appt"
-                                            name="appt"
-                                          />
-                                        </div>
-                                      </div>
-                                      <div className="col-md-1 col-lg-1">
-                                        To
-                                      </div>
-                                      <div className="col-lg-3 col-md-3">
-                                        <div>
-                                          <input
-                                            type="time"
-                                            id="appt"
-                                            name="appt"
-                                          />
-                                        </div>
                                       </div>
                                     </div>
 
@@ -348,7 +321,10 @@ const Log = (props) => {
                                           type="text"
                                           name=""
                                           className="form-control"
-                                          placeholder="0h"
+                                          placeholder="0"
+                                          onChange={(e) =>
+                                            setStdTime(e.target.value)
+                                          }
                                         />
                                       </div>
                                     </div>
@@ -362,7 +338,10 @@ const Log = (props) => {
                                           type="text"
                                           name=""
                                           className="form-control"
-                                          placeholder="20h"
+                                          placeholder="20"
+                                          onChange={(e) =>
+                                            setOverTime(e.target.value)
+                                          }
                                         />
                                       </div>
                                     </div>
@@ -374,6 +353,7 @@ const Log = (props) => {
                                     type="button"
                                     className="btn btn-primary"
                                     data-dismiss="modal"
+                                    onClick={() => handleSubmitLog()}
                                   >
                                     Log Time
                                   </button>
@@ -421,7 +401,7 @@ const Log = (props) => {
                                 <td>{p.User.Name}</td>
                                 <td>{p.Subtask.Project.Name}</td>
                                 <td>{p.Subtask.Name}</td>
-                                <td>{p.DateLog}</td>
+                                <td>{(new Date(p.DateLog)).toLocaleString()}</td>
                                 <td>{p.Overtime}</td>
                                 <td>{p.Stdtime}</td>
                                 <td>{p.Note}</td>
@@ -440,11 +420,9 @@ const Log = (props) => {
                                         <i className="fas fa-check" onClick={()=>handleApprove(p.LogId)}></i>
                                     </Button>
                                   </>:'')}
-                                  
-                                  
                                 </td>
                               </tr>
-                                )
+                            )
                         }):''}
                         </tbody>
                       </table>
@@ -464,9 +442,7 @@ const Log = (props) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     getAllLogs: () => dispatch(getAllLogs()),
-    getAllProjects: () => dispatch(getAllProjects()),
     getAllSubtask: () => dispatch(getAllSubtask()),
-    getAllUsers: () => dispatch(getAllUsers()),
     approveLog: (id) => dispatch(approveLog(id)),
     disapproveLog: (id) => dispatch(disapproveLog(id)),
   };
@@ -474,10 +450,9 @@ const mapDispatchToProps = (dispatch) => {
 
 const mapStateToProps = (state) => ({
   log: state.log,
-  project: state.project,
   subtask: state.subtask,
   user: state.user,
-})
+});
 
 
 const parseRole = (role)=>{
