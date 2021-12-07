@@ -9,6 +9,7 @@ const { BAD_REQUEST, SERVER_ERROR, PAGE_NOT_FOUND, SUCCESS, FORBIDDEN } = except
 
 const FormHandleProject = (props) => {
     const { project, user, editProject, id } = props
+    const role = parseRole(user.user.Role)
     const [name, setName] = useState("")
     const [code, setCode] = useState("")
     const [type, setType] = useState(true)
@@ -68,7 +69,7 @@ const FormHandleProject = (props) => {
     return (
         <div className="add-edit-project-page">
             <div className="wrapper">
-                <Sidebar />
+                <Sidebar role={role}  />
                 <div id="body" className="active">
                     <nav className="navbar navbar-expand-lg navbar-white bg-white">
                         <button type="button" id="sidebarCollapse" className="btn btn-light">
@@ -207,5 +208,15 @@ const mapStateToProps = (state) => ({
     project: state.project,
     user: state.user
 })
+
+const parseRole = (role)=>{
+    if (role === 0){
+        return { log: true, project: true, subtask: true, user: true }
+    }else if(role === 1){
+        return { log: true, project: true, subtask: true }
+    }else if(role === 2){
+        return { log: true }
+    }
+}
 
 export default connect(mapStateToProps, null)(FormHandleProject)

@@ -1,7 +1,7 @@
 import { exceptionConstants, logConstants } from "../constants";
 import { LogService } from "../services";
 
-const { GET_ALL_LOGS, CREATE_LOG } = logConstants;
+const { GET_ALL_LOGS, CREATE_LOG, APPROVE_LOG, DISAPPROVE_LOG } = logConstants;
 
 const { UNAUTHENTICATED, SUCCESS, CREATED } = exceptionConstants;
 
@@ -48,6 +48,56 @@ export const createLogs = (credentials) => {
         payload: {
           newCreateLog: null,
           code: code,
+        },
+      });
+    }
+    return response;
+  };
+};
+
+export const approveLog = (id) => {
+  return async function (dispatch) {
+    const response = await LogService.approveLog(id);
+    const { code, data } = response;
+    if (code === SUCCESS) {
+      dispatch({
+        type: APPROVE_LOG,
+        payload: {
+          logApprove: data.data,
+          code,
+        },
+      });
+    } else {
+      dispatch({
+        type: APPROVE_LOG,
+        payload: {
+          logApprove: null,
+          code,
+        },
+      });
+    }
+    return response;
+  };
+};
+
+export const disapproveLog = (id) => {
+  return async function (dispatch) {
+    const response = await LogService.disapproveLog(id);
+    const { code, data } = response;
+    if (code === SUCCESS) {
+      dispatch({
+        type: DISAPPROVE_LOG,
+        payload: {
+          logApprove: data.data,
+          code,
+        },
+      });
+    } else {
+      dispatch({
+        type: DISAPPROVE_LOG,
+        payload: {
+          logApprove: null,
+          code,
         },
       });
     }

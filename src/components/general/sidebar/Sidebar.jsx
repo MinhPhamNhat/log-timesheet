@@ -1,6 +1,7 @@
 import React from 'react'
 
 const Sidebar = (props) => {
+    const { role } = props
     return (
         <nav id="sidebar" className="active">
             <div className="sidebar-header">
@@ -13,18 +14,19 @@ const Sidebar = (props) => {
                 <li>
                     <a href="login"><i className="fas fa-lock"></i>Login</a>
                 </li>
-                <li>
+                {role.log?(<li>
                     <a href="log"><i className="fas fa-table"></i>Log</a>
-                </li>
-                <li>
+                </li>):''}
+                {role.project?(<li>
                     <a href="project"><i className="fas fa-copy"></i>Project</a>
-                </li>
-                <li>
+                </li>):''}
+                {role.subtask?(<li>
                     <a href="subtask"><i className="fas fa-file"></i>Sub Task</a>
-                </li>
-                <li>
+                </li>):''}
+                {role.user?(<li>
                     <a href="user"><i className="fas fa-user-friends"></i>Users</a>
-                </li>
+                </li>):''}
+                
             </ul>
         </nav>
     )

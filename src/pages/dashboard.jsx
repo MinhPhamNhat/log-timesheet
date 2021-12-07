@@ -8,10 +8,10 @@ import { connect } from 'react-redux'
 const Dashboard = (props) => {
     const { user, project, dashboard, getStatistic, getAllProjects } = props
     const { loggedIn } = user
-
+    const role = parseRole(user.user.Role)
     const [data, setData] = useState({})
     const [projects, setProjects] = useState([])
-
+    
     useEffect(async () => {
         await getStatistic()
         setProjects(await getAllProjects())
@@ -25,14 +25,14 @@ const Dashboard = (props) => {
             setProjects(project.projects)
         }
     }, [dashboard, project])
-    console.log(projects)
+
     if (!loggedIn) {
         return <Navigate to="/login" />
     }
     return (
         <div className="dashboard-page">
             <div className="wrapper">
-                <Sidebar />
+                <Sidebar role={role} />
                 <div id="body" className="active">
                     <nav className="navbar navbar-expand-lg navbar-white bg-white">
                         <button type="button" id="sidebarCollapse" className="btn btn-light">
@@ -397,5 +397,13 @@ const mapStateToProps = (state) => ({
     dashboard: state.dashboard,
     project: state.project
 })
-
+const parseRole = (role)=>{
+    if (role === 0){
+        return { log: true, project: true, subtask: true, user: true }
+    }else if(role === 1){
+        return { log: true, project: true, subtask: true }
+    }else if(role === 2){
+        return { log: true }
+    }
+}
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard)

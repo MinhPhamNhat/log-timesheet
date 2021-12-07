@@ -10,7 +10,7 @@ import {NotificationContainer, NotificationManager} from 'react-notifications';
 const AddSubtask = (props) => {
     const { getAllProjects, user, editSubtask, getSubtaskById } = props
     const { loggedIn } = user
-
+    const role = parseRole(user.user.Role)
     const query = new URLSearchParams(window.location.search)
     const id = query.get('id')
     useEffect(async ()=>{
@@ -24,7 +24,7 @@ const AddSubtask = (props) => {
     return (
         <div className="add-edit-project-page">
             <div className="wrapper">
-                <Sidebar />
+                <Sidebar role={role}/>
                 <div id="body" className="active">
                     <nav className="navbar navbar-expand-lg navbar-white bg-white">
                         <button type="button" id="sidebarCollapse" className="btn btn-light">
@@ -103,5 +103,16 @@ const mapDispatchToProps = (dispatch) => {
 const mapStateToProps = (state) => ({
     user: state.user,
 })
+
+
+const parseRole = (role)=>{
+    if (role === 0){
+        return { log: true, project: true, subtask: true, user: true }
+    }else if(role === 1){
+        return { log: true, project: true, subtask: true }
+    }else if(role === 2){
+        return { log: true }
+    }
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddSubtask)

@@ -4,20 +4,36 @@ import { Sidebar } from "../components/general";
 import { connect } from "react-redux";
 import { Navigate } from "react-router-dom";
 import { exceptionConstants } from "../constants";
-
-import { getAllLogs, getAllProjects, getAllSubtask, getAllUsers } from '../actions'
+import { Button, Modal } from 'react-bootstrap'
+import { getAllLogs, getAllProjects, getAllSubtask, getAllUsers, approveLog, disapproveLog } from '../actions'
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 import { Error } from '../pages'
 
-const { UNAUTHENTICATED, SUCCESS } = exceptionConstants;
+const { UNAUTHENTICATED, SUCCESS, PAGE_NOT_FOUND, SERVER_ERROR } = exceptionConstants;
 const Log = (props) => {
-  const { getAllLogs, getAllProjects, getAllSubtask, getAllUsers, log, project, subtask, user } = props
-  
+  const { getAllLogs, getAllProjects, getAllSubtask, getAllUsers, log, project, subtask, user, approveLog, disapproveLog } = props
+  const role = parseRole(user.user.Role)
   const [logList, setLogList] = useState([])
   const [userList, setUserList] = useState([])
   const [projectList, setProjectList] = useState([])
   const [subtaskList, setSubtaskList] = useState([])
   const [isShowErrorPage, enableShowError] = useState(false)
+  const [redirect, setRedirect] = useState(false)
+
+  const handleApprove = async (id) => {
+    const res = await approveLog(id)
+    switch (res.code){
+      case SUCCESS:
+        setRedirect(true)
+        NotificationManager.success("Successfully approve", 'Approve',  3000);
+        break;
+      default:
+        NotificationManager.error(res.message, 'Approve',  3000);
+        break;
+    }
+  }
+
   useEffect(async () => {
     await getAllLogs()
     await getAllProjects()
@@ -55,11 +71,16 @@ const Log = (props) => {
   if (isShowErrorPage) {
     return <Navigate to="/" />
   }
+  if (redirect) {
+    setRedirect(false)
+    return <Navigate to="/log" />
+  }
+
 
   return (
     <div className="Log-page">
       <div className="wrapper">
-        <Sidebar />
+        <Sidebar role={role}/>
         <div id="body" className="active">
           <nav className="navbar navbar-expand-lg navbar-white bg-white">
             <button
@@ -413,6 +434,15 @@ const Log = (props) => {
                                   />
                                 </td>
                                 <td>{p.DateApproved ? p.DateApproved : ""}</td>
+                                <td>
+                                  {user.user.Role===2?'':(!p.IsApproved?<>
+                                    <Button variant="outline-success">
+                                        <i className="fas fa-check" onClick={()=>handleApprove(p.LogId)}></i>
+                                    </Button>
+                                  </>:'')}
+                                  
+                                  
+                                </td>
                               </tr>
                                 )
                         }):''}
@@ -426,6 +456,7 @@ const Log = (props) => {
           </div>
         </div>
       </div>
+            <NotificationContainer/>
     </div>
   );
 };
@@ -436,6 +467,8 @@ const mapDispatchToProps = (dispatch) => {
     getAllProjects: () => dispatch(getAllProjects()),
     getAllSubtask: () => dispatch(getAllSubtask()),
     getAllUsers: () => dispatch(getAllUsers()),
+    approveLog: (id) => dispatch(approveLog(id)),
+    disapproveLog: (id) => dispatch(disapproveLog(id)),
   };
 };
 
@@ -446,4 +479,14 @@ const mapStateToProps = (state) => ({
   user: state.user,
 })
 
+
+const parseRole = (role)=>{
+  if (role === 0){
+      return { log: true, project: true, subtask: true, user: true }
+  }else if(role === 1){
+      return { log: true, project: true, subtask: true }
+  }else if(role === 2){
+      return { log: true }
+  }
+}
 export default connect(mapStateToProps, mapDispatchToProps)(Log);
