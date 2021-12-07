@@ -264,7 +264,7 @@ const Dashboard = (props) => {
                                                     <tbody>
                                                         {projects.map((p, i)=>{
                                                             return (
-                                                            <tr>
+                                                            <tr key={p.ProjectId}>
                                                                 <td>{p.Name}</td>
                                                                     <td className="text-end">
                                                                         <div className="col-lg-12 col-md-12">
