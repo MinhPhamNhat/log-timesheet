@@ -11,7 +11,7 @@ import {NotificationContainer, NotificationManager} from 'react-notifications';
 import { Error } from "../pages";
 import { LogService } from "../services";
 
-const { UNAUTHENTICATED, SUCCESS, PAGE_NOT_FOUND, SERVER_ERROR } = exceptionConstants;
+const { UNAUTHENTICATED, SUCCESS, PAGE_NOT_FOUND, SERVER_ERROR, CREATED } = exceptionConstants;
 const Log = (props) => {
   const { getAllLogs, getAllSubtask, log, subtask, user, approveLog, disapproveLog } = props
   const role = parseRole(user.user.Role)
@@ -19,6 +19,14 @@ const Log = (props) => {
   const [subtaskList, setSubtaskList] = useState([])
   const [isShowErrorPage, enableShowError] = useState(false)
   const [redirect, setRedirect] = useState(false)
+
+  const userAuth = JSON.parse(localStorage.getItem("user"));
+
+  const [note, setNote] = useState("")
+  const [stdTime, setStdTime] = useState(0)
+  const [overTime, setOverTime] = useState(0)
+  const [subtaskId, setSubtaskId] = useState(null)
+
 
   const handleApprove = async (id) => {
     const res = await approveLog(id)
@@ -443,6 +451,7 @@ const mapDispatchToProps = (dispatch) => {
 const mapStateToProps = (state) => ({
   log: state.log,
   subtask: state.subtask,
+  user: state.user,
 });
 
 
