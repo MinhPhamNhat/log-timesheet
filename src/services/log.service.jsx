@@ -12,6 +12,18 @@ class LogService {
         const response = await Repository.post(endpoint, credentials)
         return response
     }
+
+    async approveLog(id) {
+        const endpoint = '/Logs/approve/'+id
+        const response = await Repository.put(endpoint)
+        return response
+    }
+
+    async disapproveLog(id) {
+        const endpoint = '/Logs/disapprove/'+id
+        const response = await Repository.put(endpoint)
+        return response
+    }
 }
 
 export default new LogService()

@@ -4,28 +4,35 @@ import { Sidebar } from "../components/general";
 import { connect } from "react-redux";
 import { Navigate } from "react-router-dom";
 import { exceptionConstants } from "../constants";
-
-import { getAllLogs, getAllSubtask } from "../actions";
+import { Button, Modal } from 'react-bootstrap'
+import { getAllLogs, getAllSubtask, approveLog, disapproveLog } from '../actions'
+import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 import { Error } from "../pages";
 import { LogService } from "../services";
 
-const { UNAUTHENTICATED, SUCCESS, CREATED } = exceptionConstants;
+const { UNAUTHENTICATED, SUCCESS, PAGE_NOT_FOUND, SERVER_ERROR } = exceptionConstants;
 const Log = (props) => {
-  const { getAllLogs, getAllSubtask, log, subtask } = props;
+  const { getAllLogs, getAllSubtask, log, subtask, user, approveLog, disapproveLog } = props
+  const role = parseRole(user.user.Role)
+  const [logList, setLogList] = useState([])
+  const [subtaskList, setSubtaskList] = useState([])
+  const [isShowErrorPage, enableShowError] = useState(false)
+  const [redirect, setRedirect] = useState(false)
 
-  const [logList, setLogList] = useState([]);
-  const [subtaskList, setSubtaskList] = useState([]);
-  const [isShowErrorPage, enableShowError] = useState(false);
+  const handleApprove = async (id) => {
+    const res = await approveLog(id)
+    switch (res.code){
+      case SUCCESS:
+        setRedirect(true)
+        NotificationManager.success("Successfully approve", 'Approve',  3000);
+        break;
+      default:
+        NotificationManager.error(res.message, 'Approve',  3000);
+        break;
+    }
+  }
 
-  const [stdTime, setStdTime] = useState(0);
-  const [overTime, setOverTime] = useState(0);
-  const [subtaskId, setSubtaskId] = useState(null);
-  const [note, setNote] = useState("");
-
-  const userAuth = JSON.parse(localStorage.getItem("user"));
-
-  console.log(userAuth);
   useEffect(async () => {
     await getAllLogs();
     await getAllSubtask();
@@ -54,8 +61,6 @@ const Log = (props) => {
       DateLog: (new Date()).toLocaleString("en-US"),
     };
 
-    console.log(credentials)
-
     const res = await LogService.createLogs(credentials);
     if (res.code === CREATED) {
       await getAllLogs();
@@ -68,11 +73,23 @@ const Log = (props) => {
       );
     }
   }
+  if (redirect) {
+    setRedirect(false)
+    return <Navigate to="/log" />
+  }
+
+  if (isShowErrorPage) {
+    return (
+      // <_404 status={exceptionStatus.code} message={exceptionStatus.message} />
+      <Error />
+    );
+  }
+
 
   return (
     <div className="Log-page">
       <div className="wrapper">
-        <Sidebar />
+        <Sidebar role={role}/>
         <div id="body" className="active">
           <nav className="navbar navbar-expand-lg navbar-white bg-white">
             <button
@@ -369,33 +386,36 @@ const Log = (props) => {
                           </tr>
                         </thead>
                         <tbody>
-                          {logList
-                            ? logList.map((p) => {
-                                return (
-                                  <tr key={p.LogId}>
-                                    <td>{p.LogId}</td>
-                                    <td>{p.User.Name}</td>
-                                    <td>{p.Subtask.Project.Name}</td>
-                                    <td>{p.Subtask.Name}</td>
-                                    <td>{(new Date(p.DateLog)).toLocaleString()}</td>
-                                    <td>{p.Overtime}</td>
-                                    <td>{p.Stdtime}</td>
-                                    <td>{p.Note}</td>
-                                    <td>
-                                      <input
-                                        type="checkbox"
-                                        id="vehicle1"
-                                        name="vehicle1"
-                                        checked={p.IsApproved}
-                                      />
-                                    </td>
-                                    <td>
-                                      {p.DateApproved ? p.DateApproved : ""}
-                                    </td>
-                                  </tr>
-                                );
-                              })
-                            : ""}
+                        {logList ? logList.map(p => {
+                            return (
+                              <tr key={p.LogId}>
+                                <td>{p.LogId}</td>
+                                <td>{p.User.Name}</td>
+                                <td>{p.Subtask.Project.Name}</td>
+                                <td>{p.Subtask.Name}</td>
+                                <td>{(new Date(p.DateLog)).toLocaleString()}</td>
+                                <td>{p.Overtime}</td>
+                                <td>{p.Stdtime}</td>
+                                <td>{p.Note}</td>
+                                <td>
+                                  <input
+                                    type="checkbox"
+                                    id="vehicle1"
+                                    name="vehicle1"
+                                    checked={p.IsApproved}
+                                  />
+                                </td>
+                                <td>{p.DateApproved ? p.DateApproved : ""}</td>
+                                <td>
+                                  {user.user.Role===2?'':(!p.IsApproved?<>
+                                    <Button variant="outline-success">
+                                        <i className="fas fa-check" onClick={()=>handleApprove(p.LogId)}></i>
+                                    </Button>
+                                  </>:'')}
+                                </td>
+                              </tr>
+                            )
+                        }):''}
                         </tbody>
                       </table>
                     </div>
@@ -406,6 +426,7 @@ const Log = (props) => {
           </div>
         </div>
       </div>
+            <NotificationContainer/>
     </div>
   );
 };
@@ -414,6 +435,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     getAllLogs: () => dispatch(getAllLogs()),
     getAllSubtask: () => dispatch(getAllSubtask()),
+    approveLog: (id) => dispatch(approveLog(id)),
+    disapproveLog: (id) => dispatch(disapproveLog(id)),
   };
 };
 
@@ -422,4 +445,14 @@ const mapStateToProps = (state) => ({
   subtask: state.subtask,
 });
 
+
+const parseRole = (role)=>{
+  if (role === 0){
+      return { log: true, project: true, subtask: true, user: true }
+  }else if(role === 1){
+      return { log: true, project: true, subtask: true }
+  }else if(role === 2){
+      return { log: true }
+  }
+}
 export default connect(mapStateToProps, mapDispatchToProps)(Log);

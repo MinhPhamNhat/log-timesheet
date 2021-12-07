@@ -10,6 +10,7 @@ const { SUCCESS, PAGE_NOT_FOUND, FORBIDDEN, SERVER_ERROR } = exceptionConstants
 const Subtask = (props) => {
     const { user, subtask, getAllSubtask, deleteSubtask } = props
     const { loggedIn } = user
+    const role = parseRole(user.user.Role)
     const [subtasks, setSubtasks] = useState([])
     const [show, setShow] = useState(false);
     const [currId, setCurrId] = useState(null)
@@ -52,7 +53,7 @@ const Subtask = (props) => {
     return (
         <div className="subtask-page">
             <div className="wrapper">
-                <Sidebar />
+                <Sidebar role={role} />
                 <div id="body" className="active">
                     <nav className="navbar navbar-expand-lg navbar-white bg-white">
                         <button type="button" id="sidebarCollapse" className="btn btn-light">
@@ -173,5 +174,14 @@ const mapStateToProps = (state) => ({
     user: state.user,
     subtask: state.subtask
 })
+const parseRole = (role)=>{
+    if (role === 0){
+        return { log: true, project: true, subtask: true, user: true }
+    }else if(role === 1){
+        return { log: true, project: true, subtask: true }
+    }else if(role === 2){
+        return { log: true }
+    }
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(Subtask)

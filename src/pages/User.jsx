@@ -11,10 +11,10 @@ const { UNAUTHENTICATED, SUCCESS } = exceptionConstants;
 const User = (props) => {
 
     const { getAllUsers, user } = props
-
+    const role = parseRole(user.user.Role)
     const [userList, setUserList] = useState([])
     const [isShowErrorPage, enableShowError] = useState(false)
-
+    
     useEffect(async () => {
         await getAllUsers()
     }, [])
@@ -40,7 +40,7 @@ const User = (props) => {
     return (
         <div className="user-page">
             <div className="wrapper">
-                <Sidebar />
+                <Sidebar role={role}/>
                 <div id="body" className="active">
                     <nav className="navbar navbar-expand-lg navbar-white bg-white">
                         <button type="button" id="sidebarCollapse" className="btn btn-light">
@@ -142,4 +142,13 @@ const mapDispatchToProps = (dispatch) => {
     user: state.user,
   })
 
+  const parseRole = (role)=>{
+    if (role === 0){
+        return { log: true, project: true, subtask: true, user: true }
+    }else if(role === 1){
+        return { log: true, project: true, subtask: true }
+    }else if(role === 2){
+        return { log: true }
+    }
+}
 export default connect(mapStateToProps, mapDispatchToProps)(User)

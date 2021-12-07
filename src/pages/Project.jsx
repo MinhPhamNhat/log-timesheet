@@ -10,6 +10,7 @@ const { SERVER_ERROR, SUCCESS, PAGE_NOT_FOUND, FORBIDDEN } = exceptionConstants
 
 const Project =  (props) => {
     const { user, getAllProjects, deleteProject } = props
+    const role = parseRole(user.user.Role)
     const { loggedIn } = user
     const [projectRes, setProjectRes] = useState([])
     const [show, setShow] = useState(false);
@@ -47,7 +48,7 @@ const Project =  (props) => {
     return (
         <div className="project-page">
             <div className="wrapper">
-                <Sidebar />
+                <Sidebar role={role} />
                 <div id="body" className="active">
                     <nav className="navbar navbar-expand-lg navbar-white bg-white">
                         <button type="button" id="sidebarCollapse" className="btn btn-light">
@@ -120,7 +121,7 @@ const Project =  (props) => {
                                         <tbody>
                                             {projectRes.data?projectRes.data.data.map(p => {
                                                 return (
-                                                    <tr>
+                                                    <tr key={p.ProjectId}>
                                                         <td>{p.ProjectId}</td>
                                                         <td>{p.Name}</td>
                                                         <td>{p.ProjectCode}</td>
@@ -177,5 +178,13 @@ const mapDispatchToProps = (dispatch) => {
 const mapStateToProps = (state) => ({
     user: state.user,
 })
-
+const parseRole = (role)=>{
+    if (role === 0){
+        return { log: true, project: true, subtask: true, user: true }
+    }else if(role === 1){
+        return { log: true, project: true, subtask: true }
+    }else if(role === 2){
+        return { log: true }
+    }
+  }
 export default connect(mapStateToProps, mapDispatchToProps)(Project)
