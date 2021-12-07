@@ -2,7 +2,7 @@ import { subtaskConstants } from '../constants'
 
 const { GET_ALL_SUBTASK, GET_SUBTASK_BY_ID } = subtaskConstants
 
-const initialState = { subtask: null, code: null }
+const initialState = { subtask: null, code: null, subtasks: [] }
 
   const subtask = (state = initialState, action) => {
     switch (action.type) {

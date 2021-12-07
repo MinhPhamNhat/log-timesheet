@@ -2,14 +2,14 @@ import { authConstants, userConstants } from "../constants";
 
 const { LOGIN_SUCCESS, LOGIN_FAILURE, LOGOUT } = authConstants;
 
-const { VERIFY_USER_TOKEN, GET_MANAGER } = userConstants;
+const { VERIFY_USER_TOKEN, GET_MANAGER, GET_ALL_USER } = userConstants;
 
 const userAuth = JSON.parse(localStorage.getItem("user"));
 const token = localStorage.getItem("token");
 
 const initialState = token
-  ? { loggedIn: true, user: userAuth }
-  : { loggedIn: false, user: null };
+  ? { loggedIn: true, user: userAuth, code: 200, users: [] }
+  : { loggedIn: false, user: null, code: 401, users: [] };
 
 const user = (state = initialState, action) => {
   switch (action.type) {
@@ -41,6 +41,12 @@ const user = (state = initialState, action) => {
         ...state,
         loggedIn: action.payload.loggedIn,
         user: action.payload.user,
+      }
+    case GET_ALL_USER:
+      return {
+        ...state,
+        users: action.payload.users,
+        code: action.payload.code,
       }
     default:
       return state

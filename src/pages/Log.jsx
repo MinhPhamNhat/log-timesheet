@@ -5,18 +5,24 @@ import { connect } from "react-redux";
 import { Navigate } from "react-router-dom";
 import { exceptionConstants } from "../constants";
 
-import { getAllLogs } from '../actions'
+import { getAllLogs, getAllProjects, getAllSubtask, getAllUsers } from '../actions'
 
 import { Error } from '../pages'
 
 const { UNAUTHENTICATED, SUCCESS } = exceptionConstants;
 const Log = (props) => {
-  const { getAllLogs, log } = props
+  const { getAllLogs, getAllProjects, getAllSubtask, getAllUsers, log, project, subtask, user } = props
   
   const [logList, setLogList] = useState([])
+  const [userList, setUserList] = useState([])
+  const [projectList, setProjectList] = useState([])
+  const [subtaskList, setSubtaskList] = useState([])
   const [isShowErrorPage, enableShowError] = useState(false)
   useEffect(async () => {
     await getAllLogs()
+    await getAllProjects()
+    await getAllSubtask()
+    await getAllUsers()
   }, [])
 
   useEffect(async () => {
@@ -24,16 +30,30 @@ const Log = (props) => {
       console.log(log)
       setLogList(log.logList)
     }
-    else if (log.code == UNAUTHENTICATED) {
+
+    if (project.code == SUCCESS) {
+      console.log(project.projects)
+      setProjectList(project.projects)
+    }
+
+    if (subtask.code == SUCCESS) {
+      console.log(subtask.subtasks)
+      setSubtaskList(subtask.subtasks)
+    }
+
+    if (user.code == SUCCESS) {
+      console.log(user.users)
+      setUserList(user.users)
+    }
+
+    if (log.code == UNAUTHENTICATED || project.code == UNAUTHENTICATED || subtask.code == UNAUTHENTICATED || user.code == UNAUTHENTICATED) {
       enableShowError(true)
     }
-  }, [log.logList])
+
+  }, [log.logList, project.projects, subtask.subtasks, user.users])
 
   if (isShowErrorPage) {
-    return (
-        // <_404 status={exceptionStatus.code} message={exceptionStatus.message} />
-        <Error />
-    )
+    return <Navigate to="/" />
   }
 
   return (
@@ -413,11 +433,17 @@ const Log = (props) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     getAllLogs: () => dispatch(getAllLogs()),
+    getAllProjects: () => dispatch(getAllProjects()),
+    getAllSubtask: () => dispatch(getAllSubtask()),
+    getAllUsers: () => dispatch(getAllUsers()),
   };
 };
 
 const mapStateToProps = (state) => ({
   log: state.log,
+  project: state.project,
+  subtask: state.subtask,
+  user: state.user,
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Log);
