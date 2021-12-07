@@ -17,7 +17,7 @@ const Error = (props) => {
                             <p>Page Not Found !</p>
                         </header>
                         <p className="error-advise">The page you were looking for could not be found.</p>
-                        <a className="btn btn-primary btn-round mb-5" href="dashboard.html">GO TO HOME PAGE</a>
+                        <a className="btn btn-primary btn-round mb-5" href="./">GO TO HOME PAGE</a>
                         <footer className="page-copyright">
                             <p>© 2021. All RIGHT RESERVED.</p>
                         </footer>

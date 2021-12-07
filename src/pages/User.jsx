@@ -1,6 +1,42 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {Sidebar} from '../components/general'
+import { connect } from "react-redux";
+
+import { getAllUsers } from '../actions'
+
+import { Error } from '../pages'
+import { exceptionConstants } from "../constants";
+const { UNAUTHENTICATED, SUCCESS } = exceptionConstants;
+
 const User = (props) => {
+
+    const { getAllUsers, user } = props
+
+    const [userList, setUserList] = useState([])
+    const [isShowErrorPage, enableShowError] = useState(false)
+
+    useEffect(async () => {
+        await getAllUsers()
+    }, [])
+
+    useEffect(async () => {
+        if (user.code == SUCCESS) {
+          setUserList(user.users)
+        }
+    
+        if (user.code == UNAUTHENTICATED) {
+          enableShowError(true)
+        }
+    
+    }, [user.users])
+
+    if (isShowErrorPage) {
+        return (
+            // <_404 status={exceptionStatus.code} message={exceptionStatus.message} />
+            <Error />
+        )
+    }
+
     return (
         <div className="user-page">
             <div className="wrapper">
@@ -65,47 +101,25 @@ const User = (props) => {
                                                 <th>Position</th>
                                                 <th>Name</th>
                                                 <th>Username</th>
-                                                <th>Password</th>
-                                                <th></th>
+                                                {/* <th></th> */}
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td>1</td>
-                                                <td>1</td>
-                                                <td>Admin</td>
-                                                <td>Nam</td>
-                                                <td>admin123</td>
-                                                <td>123456</td>
-                                                <td className="text-end">
-                                                    <a href="" className="btn btn-outline-info btn-rounded"><i className="fas fa-pen"></i></a>
-                                                    <a href="" className="btn btn-outline-danger btn-rounded"><i className="fas fa-trash"></i></a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>2</td>
-                                                <td>2</td>
-                                                <td>PM</td>
-                                                <td>Nam1</td>
-                                                <td>admin123</td>
-                                                <td>123456</td>
-                                                <td className="text-end">
-                                                    <a href="" className="btn btn-outline-info btn-rounded"><i className="fas fa-pen"></i></a>
-                                                    <a href="" className="btn btn-outline-danger btn-rounded"><i className="fas fa-trash"></i></a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>3</td>
-                                                <td>3</td>
-                                                <td>Staf</td>
-                                                <td>Nam3</td>
-                                                <td>admin123</td>
-                                                <td>123456</td>
-                                                <td className="text-end">
-                                                    <a href="" className="btn btn-outline-info btn-rounded"><i className="fas fa-pen"></i></a>
-                                                    <a href="" className="btn btn-outline-danger btn-rounded"><i className="fas fa-trash"></i></a>
-                                                </td>
-                                            </tr>
+                                            {userList.map(u => {
+                                                return (
+                                                    <tr key={u.UserId}>
+                                                        <td>{u.UserId}</td>
+                                                        <td>{u.Role}</td>
+                                                        <td>{u.Position}</td>
+                                                        <td>{u.Name}</td>
+                                                        <td>{u.Username}</td>
+                                                        {/* <td className="text-end">
+                                                            <a href="" className="btn btn-outline-info btn-rounded"><i className="fas fa-pen"></i></a>
+                                                            <a href="" className="btn btn-outline-danger btn-rounded"><i className="fas fa-trash"></i></a>
+                                                        </td> */}
+                                                    </tr>
+                                                )
+                                            })}
                                         </tbody>
                                     </table>
                                 </div>
@@ -118,4 +132,14 @@ const User = (props) => {
     )
 }
 
-export default (User)
+const mapDispatchToProps = (dispatch) => {
+    return {
+      getAllUsers: () => dispatch(getAllUsers()),
+    };
+  };
+  
+  const mapStateToProps = (state) => ({
+    user: state.user,
+  })
+
+export default connect(mapStateToProps, mapDispatchToProps)(User)
