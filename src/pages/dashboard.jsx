@@ -1,12 +1,31 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Sidebar} from '../components/general'
 
 import { Navigate } from 'react-router-dom'
-
+import { getStatistic } from '../actions/dashboard.action'
+import { getAllProjects } from '../actions/project.action'
 import { connect } from 'react-redux'
 const Dashboard = (props) => {
-    const { user } = props
+    const { user, project, dashboard, getStatistic, getAllProjects } = props
     const { loggedIn } = user
+
+    const [data, setData] = useState({})
+    const [projects, setProjects] = useState([])
+
+    useEffect(async () => {
+        await getStatistic()
+        setProjects(await getAllProjects())
+    }, [])
+
+    useEffect(()=>{
+        if (dashboard.code !== null ){
+            setData(dashboard.dashboard)
+        }
+        if (project.code !== null){
+            setProjects(project.projects)
+        }
+    }, [dashboard, project])
+    console.log(projects)
     if (!loggedIn) {
         return <Navigate to="/login" />
     }
@@ -79,7 +98,7 @@ const Dashboard = (props) => {
                                                 <div className="col-sm-8">
                                                     <div className="detail">
                                                         <p className="detail-subtitle">Total Projects</p>
-                                                        <span className="number">1000</span>
+                                                        <span className="number">{data.countProject}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -104,7 +123,7 @@ const Dashboard = (props) => {
                                                 <div className="col-sm-8">
                                                     <div className="detail">
                                                         <p className="detail-subtitle">Total PM</p>
-                                                        <span className="number">50</span>
+                                                        <span className="number">{data.countPM}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -129,7 +148,7 @@ const Dashboard = (props) => {
                                                 <div className="col-sm-8">
                                                     <div className="detail">
                                                         <p className="detail-subtitle">Total Employees</p>
-                                                        <span className="number">200</span>
+                                                        <span className="number">{data.countUser}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -154,7 +173,7 @@ const Dashboard = (props) => {
                                                 <div className="col-sm-8">
                                                     <div className="detail">
                                                         <p className="detail-subtitle">Total Logs</p>
-                                                        <span className="number">75</span>
+                                                        <span className="number">{data.countLog}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -243,237 +262,60 @@ const Dashboard = (props) => {
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr>
-                                                            <td>Web 1</td>
-                                                            <td className="text-end">
-                                                                <div className="col-lg-12 col-md-12">
-                                                                    {/* <a href="" className="btn btn-sm btn-outline-primary float-end"><i className="fas fa-plus-circle"></i> Log Time</a> */}
-                                                                    <button type="button" className="btn btn-primary" data-toggle="modal" data-target="#logtime">
-                                                                        Employees List
-                                                                    </button>
-                                                                    <div className="modal " id="logtime">
-                                                                        <div className="modal-dialog modal-sm" tabIndex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                                                                            <div className="modal-content">
-                                                                                <div className="modal-header">
-                                                                                    <h4 className="modal-title">Employees List</h4>
-                                                                                    <button type="button" className="close" data-dismiss="modal">&times;</button>
-                                                                                </div>
-
-                                                                                <div className="modal-body">
-                                                                                    <form>
-                                                                                        <div className="canvas-wrapper">
-                                                                                            <table className="table table-striped">
-                                                                                                <thead className="success">
-                                                                                                    <tr>
-                                                                                                        <th className="text-start">UserId</th>
-                                                                                                        <th>Name</th>
-                                                                                                    </tr>
-                                                                                                </thead>
-                                                                                                <tbody>
-                                                                                                    <tr>
-                                                                                                        <td className="text-start">1</td>
-                                                                                                        <td>Nam</td>
-                                                                                                    </tr>
-                                                                                                    <tr>
-                                                                                                        <td className="text-start">1</td>
-                                                                                                        <td>Nam</td>
-                                                                                                    </tr>
-                                                                                                    <tr>
-                                                                                                        <td className="text-start">1</td>
-                                                                                                        <td>Nam</td>
-                                                                                                    </tr>
-
-                                                                                                </tbody>
-                                                                                            </table>
+                                                        {projects.map((p, i)=>{
+                                                            return (
+                                                            <tr>
+                                                                <td>{p.Name}</td>
+                                                                    <td className="text-end">
+                                                                        <div className="col-lg-12 col-md-12">
+                                                                            {/* <a href="" className="btn btn-sm btn-outline-primary float-end"><i className="fas fa-plus-circle"></i> Log Time</a> */}
+                                                                            <button type="button" className="btn btn-primary" data-toggle="modal" data-target={"#logtime-"+p.ProjectId}>
+                                                                                Employees List
+                                                                            </button>
+                                                                            <div className="modal " id={"logtime-"+p.ProjectId}>
+                                                                                <div className="modal-dialog modal-sm" tabIndex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                                                                    <div className="modal-content">
+                                                                                        <div className="modal-header">
+                                                                                            <h4 className="modal-title">Employees List</h4>
+                                                                                            <button type="button" className="close" data-dismiss="modal">&times;</button>
                                                                                         </div>
-                                                                                    </form>
-                                                                                </div>
 
-                                                                                <div className="modal-footer">
-                                                                                    <button type="button" className="btn btn-primary" data-dismiss="modal">Log Time</button>
-                                                                                    <button type="button" className="btn btn-danger" data-dismiss="modal">Cancel</button>
-                                                                                </div>
+                                                                                        <div className="modal-body">
+                                                                                            <form>
+                                                                                                <div className="canvas-wrapper">
+                                                                                                    <table className="table table-striped">
+                                                                                                        <thead className="success">
+                                                                                                            <tr>
+                                                                                                                <th className="text-start">UserId</th>
+                                                                                                            </tr>
+                                                                                                        </thead>
+                                                                                                        <tbody>
+                                                                                                            {p.ProjectUsers.map(u=>{
+                                                                                                                return (
+                                                                                                                    <tr>
+                                                                                                                        <td className="text-start">{u.UserId}</td>
+                                                                                                                    </tr>
+                                                                                                                )
+                                                                                                            })}
 
+                                                                                                        </tbody>
+                                                                                                    </table>
+                                                                                                </div>
+                                                                                            </form>
+                                                                                        </div>
+
+                                                                                        <div className="modal-footer">
+                                                                                            <button type="button" className="btn btn-danger" data-dismiss="modal">Cancel</button>
+                                                                                        </div>
+
+                                                                                    </div>
+                                                                                </div>
                                                                             </div>
                                                                         </div>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Web</td>
-                                                            <td className="text-end">
-                                                                <div className="col-lg-12 col-md-12">
-                                                                    {/* <a href="" className="btn btn-sm btn-outline-primary float-end"><i className="fas fa-plus-circle"></i> Log Time</a> */}
-                                                                    <button type="button" className="btn btn-primary" data-toggle="modal" data-target="#logtime">
-                                                                        Employees List
-                                                                    </button>
-
-                                                                    <div className="modal " id="logtime">
-                                                                        <div className="modal-dialog modal-sm" tabIndex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                                                                            <div className="modal-content">
-                                                                                <div className="modal-header">
-                                                                                    <h4 className="modal-title">Employees List</h4>
-                                                                                    <button type="button" className="close" data-dismiss="modal">&times;</button>
-                                                                                </div>
-
-                                                                                <div className="modal-body">
-                                                                                    <form>
-                                                                                        <div className="canvas-wrapper">
-                                                                                            <table className="table table-striped">
-                                                                                                <thead className="success">
-                                                                                                    <tr>
-                                                                                                        <th className="text-start">UserId</th>
-                                                                                                        <th>Name</th>
-                                                                                                    </tr>
-                                                                                                </thead>
-                                                                                                <tbody>
-                                                                                                    <tr>
-                                                                                                        <td className="text-start">1</td>
-                                                                                                        <td>Nam</td>
-                                                                                                    </tr>
-                                                                                                    <tr>
-                                                                                                        <td className="text-start">1</td>
-                                                                                                        <td>Nam</td>
-                                                                                                    </tr>
-                                                                                                    <tr>
-                                                                                                        <td className="text-start">1</td>
-                                                                                                        <td>Nam</td>
-                                                                                                    </tr>
-
-                                                                                                </tbody>
-                                                                                            </table>
-                                                                                        </div>
-                                                                                    </form>
-                                                                                </div>
-
-                                                                                <div className="modal-footer">
-                                                                                    <button type="button" className="btn btn-primary" data-dismiss="modal">Log Time</button>
-                                                                                    <button type="button" className="btn btn-danger" data-dismiss="modal">Cancel</button>
-                                                                                </div>
-
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Web 2</td>
-                                                            <td className="text-end">
-                                                                <div className="col-lg-12 col-md-12">
-                                                                    {/* <a href="" className="btn btn-sm btn-outline-primary float-end"><i className="fas fa-plus-circle"></i> Log Time</a> */}
-                                                                    <button type="button" className="btn btn-primary" data-toggle="modal" data-target="#logtime">
-                                                                        Employees List
-                                                                    </button>
-
-                                                                    <div className="modal " id="logtime">
-                                                                        <div className="modal-dialog modal-sm" tabIndex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                                                                            <div className="modal-content">
-                                                                                <div className="modal-header">
-                                                                                    <h4 className="modal-title">Employees List</h4>
-                                                                                    <button type="button" className="close" data-dismiss="modal">&times;</button>
-                                                                                </div>
-
-                                                                                <div className="modal-body">
-                                                                                    <form>
-                                                                                        <div className="canvas-wrapper">
-                                                                                            <table className="table table-striped">
-                                                                                                <thead className="success">
-                                                                                                    <tr>
-                                                                                                        <th className="text-start">UserId</th>
-                                                                                                        <th>Name</th>
-                                                                                                    </tr>
-                                                                                                </thead>
-                                                                                                <tbody>
-                                                                                                    <tr>
-                                                                                                        <td className="text-start">1</td>
-                                                                                                        <td>Nam</td>
-                                                                                                    </tr>
-                                                                                                    <tr>
-                                                                                                        <td className="text-start">1</td>
-                                                                                                        <td>Nam</td>
-                                                                                                    </tr>
-                                                                                                    <tr>
-                                                                                                        <td className="text-start">1</td>
-                                                                                                        <td>Nam</td>
-                                                                                                    </tr>
-
-                                                                                                </tbody>
-                                                                                            </table>
-                                                                                        </div>
-                                                                                    </form>
-                                                                                </div>
-
-                                                                                <div className="modal-footer">
-                                                                                    <button type="button" className="btn btn-primary" data-dismiss="modal">Log Time</button>
-                                                                                    <button type="button" className="btn btn-danger" data-dismiss="modal">Cancel</button>
-                                                                                </div>
-
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Web 3</td>
-                                                            <td className="text-end">
-                                                                <div className="col-lg-12 col-md-12">
-                                                                    <a href="" className="btn btn-sm btn-outline-primary float-end"><i className="fas fa-plus-circle"></i> Log Time</a>
-                                                                    <button type="button" className="btn btn-primary" data-toggle="modal" data-target="#logtime">
-                                                                        Employees List
-                                                                    </button>
-
-                                                                    <div className="modal " id="logtime">
-                                                                        <div className="modal-dialog modal-sm" tabIndex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                                                                            <div className="modal-content">
-                                                                                <div className="modal-header">
-                                                                                    <h4 className="modal-title">Employees List</h4>
-                                                                                    <button type="button" className="close" data-dismiss="modal">&times;</button>
-                                                                                </div>
-
-                                                                                <div className="modal-body">
-                                                                                    <form>
-                                                                                        <div className="canvas-wrapper">
-                                                                                            <table className="table table-striped">
-                                                                                                <thead className="success">
-                                                                                                    <tr>
-                                                                                                        <th className="text-start">UserId</th>
-                                                                                                        <th>Name</th>
-                                                                                                    </tr>
-                                                                                                </thead>
-                                                                                                <tbody>
-                                                                                                    <tr>
-                                                                                                        <td className="text-start">1</td>
-                                                                                                        <td>Nam</td>
-                                                                                                    </tr>
-                                                                                                    <tr>
-                                                                                                        <td className="text-start">1</td>
-                                                                                                        <td>Nam</td>
-                                                                                                    </tr>
-                                                                                                    <tr>
-                                                                                                        <td className="text-start">1</td>
-                                                                                                        <td>Nam</td>
-                                                                                                    </tr>
-
-                                                                                                </tbody>
-                                                                                            </table>
-                                                                                        </div>
-                                                                                    </form>
-                                                                                </div>
-
-                                                                                <div className="modal-footer">
-                                                                                    <button type="button" className="btn btn-primary" data-dismiss="modal">Log Time</button>
-                                                                                    <button type="button" className="btn btn-danger" data-dismiss="modal">Cancel</button>
-                                                                                </div>
-
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
+                                                                    </td>
+                                                                </tr>
+                                                            )
+                                                        })}
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -544,11 +386,16 @@ const Dashboard = (props) => {
 }
 
 const mapDispatchToProps = (dispatch) => {
-    return {}
+    return {
+        getStatistic: () => dispatch(getStatistic()),
+        getAllProjects: () => dispatch(getAllProjects())
+    }
 }
 
 const mapStateToProps = (state) => ({
     user: state.user,
+    dashboard: state.dashboard,
+    project: state.project
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard)

@@ -4,7 +4,7 @@ import { Navigate, } from 'react-router-dom'
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 import { exceptionConstants } from '../../constants'
 
-const { BAD_REQUEST, SERVER_ERROR, PAGE_NOT_FOUND, SUCCESS } = exceptionConstants
+const { BAD_REQUEST, SERVER_ERROR, PAGE_NOT_FOUND, SUCCESS, FORBIDDEN } = exceptionConstants
 
 const SubtaskEditForm = (props) => {
     const { project, editSubtask, subtask, id } = props
@@ -43,6 +43,9 @@ const SubtaskEditForm = (props) => {
                 break;
             case SERVER_ERROR:
                 NotificationManager.error(res.message, 'Internal Error',  3000);
+                break;
+            case FORBIDDEN:
+                NotificationManager.error(res.message, 'Access Denied',  3000);
                 break;
         }
     }
