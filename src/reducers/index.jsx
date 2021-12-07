@@ -3,6 +3,7 @@ import user from './user'
 import project from './project'
 import log from "./log"
 import subtask from './subtask'
+import dashboard from './dashboard'
 import { authConstants } from '../constants'
 
 const { LOGOUT } = authConstants;
@@ -11,7 +12,8 @@ const appReducer = combineReducers({
   user,
   log,
   project,
-  subtask
+  subtask,
+  dashboard
 })
 
 const rootReducer = (state, action) => {

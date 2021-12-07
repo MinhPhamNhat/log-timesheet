@@ -6,7 +6,7 @@ import { getAllProjects, deleteProject } from '../actions'
 import { Button, Modal } from 'react-bootstrap'
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 import { exceptionConstants } from '../constants'
-const { BAD_REQUEST, SERVER_ERROR, PAGE_NOT_FOUND, SUCCESS } = exceptionConstants
+const { SERVER_ERROR, SUCCESS, PAGE_NOT_FOUND, FORBIDDEN } = exceptionConstants
 
 const Project =  (props) => {
     const { user, getAllProjects, deleteProject } = props
@@ -25,8 +25,12 @@ const Project =  (props) => {
         const res = await deleteProject(currId)
         if (res.code === PAGE_NOT_FOUND){
             NotificationManager.error(res.message, 'Project notfound',  3000);
-        }else{
+        }else if (res.code === FORBIDDEN){
+            NotificationManager.error(res.message, 'Access denied',  3000);
+        }else if (res.code === SUCCESS){
             setRedirect(true)
+        }else if (res.code === SERVER_ERROR){
+            NotificationManager.error(res.message, 'Internal Exception',  3000);
         }
     }
     useEffect(async () => {
