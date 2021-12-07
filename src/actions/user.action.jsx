@@ -12,7 +12,7 @@ export const getManager = () => {
     const response = await UserService.getManager()
     const { code, data } = response
     await dispatch(checkAuthentication(code))
-    if (code === 200)
+    if (code === SUCCESS)
     dispatch({
         type: GET_MANAGER,
         payload: {

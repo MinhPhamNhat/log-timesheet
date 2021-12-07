@@ -5,11 +5,10 @@ import { Sidebar } from '../general'
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 import { exceptionConstants } from '../../constants'
 
-const { BAD_REQUEST, SERVER_ERROR, PAGE_NOT_FOUND, SUCCESS } = exceptionConstants
+const { BAD_REQUEST, SERVER_ERROR, PAGE_NOT_FOUND, SUCCESS, FORBIDDEN } = exceptionConstants
 
 const FormHandleProject = (props) => {
     const { project, user, editProject, id } = props
-    
     const [name, setName] = useState("")
     const [code, setCode] = useState("")
     const [type, setType] = useState(true)
@@ -42,6 +41,9 @@ const FormHandleProject = (props) => {
                 break;
             case SERVER_ERROR:
                 NotificationManager.error(res.message, 'Internal Error',  3000);
+                break;
+            case FORBIDDEN:
+                NotificationManager.warning(res.message, 'Access Denied',  3000);
                 break;
         }
     }
@@ -173,11 +175,11 @@ const FormHandleProject = (props) => {
                                                 <div className="col-md-10 select">
                                                     <select name="" onChange={(e) => setManager(e.target.value)} value={manager} disabled={type} className="form-select">
                                                         <option value="null">None</option>
-                                                        {managerList.map(m => {
+                                                        {managerList?managerList.map(m => {
                                                             return (
                                                                 <option value={m.UserId} >{m.Name}</option>
                                                             )
-                                                        })}
+                                                        }):''}
                                                     </select>
                                                 </div>
                                             </div>

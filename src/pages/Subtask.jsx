@@ -6,7 +6,7 @@ import { getAllSubtask, deleteSubtask } from '../actions'
 import { Button, Modal } from 'react-bootstrap'
 import { exceptionConstants } from '../constants'
 import { NotificationContainer, NotificationManager } from 'react-notifications';
-const { SUCCESS, PAGE_NOT_FOUND } = exceptionConstants
+const { SUCCESS, PAGE_NOT_FOUND, FORBIDDEN, SERVER_ERROR } = exceptionConstants
 const Subtask = (props) => {
     const { user, subtask, getAllSubtask, deleteSubtask } = props
     const { loggedIn } = user
@@ -24,8 +24,12 @@ const Subtask = (props) => {
         const res = await deleteSubtask(currId)
         if (res.code === PAGE_NOT_FOUND){
             NotificationManager.error(res.message, 'Subtask notfound',  3000);
-        }else{
+        }else if (res.code === FORBIDDEN){
+            NotificationManager.error(res.message, 'Access denied',  3000);
+        }else if (res.code === SUCCESS){
             setRedirect(true)
+        }else if (res.code === SERVER_ERROR){
+            NotificationManager.error(res.message, 'Internal Exception',  3000);
         }
     }
 
