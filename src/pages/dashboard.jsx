@@ -205,42 +205,43 @@ const Dashboard = (props) => {
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr>
-                                                            <td>Monday</td>
-                                                            <td>12</td>
-                                                            <td className="text-end">20h</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Tuesday</td>
-                                                            <td>12</td>
-                                                            <td className="text-end">20h</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Wednesday</td>
-                                                            <td>12</td>
-                                                            <td className="text-end">20h</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Thursday</td>
-                                                            <td>12</td>
-                                                            <td className="text-end">20h</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Friday</td>
-                                                            <td>12</td>
-                                                            <td className="text-end">20h</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Saturday</td>
-                                                            <td>12</td>
-                                                            <td className="text-end">20h</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Sunday</td>
-                                                            <td>12</td>
-                                                            <td className="text-end">20h</td>
-                                                        </tr>
-
+                                                        {data.currentLogs?(<>
+                                                            <tr>
+                                                                <td>Monday</td>
+                                                                <td>{data.currentLogs.totalLog[0]}</td>
+                                                                <td className="text-end">{data.currentLogs.totalTime[0]}h</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Tuesday</td>
+                                                                <td>{data.currentLogs.totalLog[1]}</td>
+                                                                <td className="text-end">{data.currentLogs.totalTime[1]}h</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Wednesday</td>
+                                                                <td>{data.currentLogs.totalLog[2]}</td>
+                                                                <td className="text-end">{data.currentLogs.totalTime[2]}h</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Thursday</td>
+                                                                <td>{data.currentLogs.totalLog[3]}</td>
+                                                                <td className="text-end">{data.currentLogs.totalTime[3]}h</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Friday</td>
+                                                                <td>{data.currentLogs.totalLog[4]}</td>
+                                                                <td className="text-end">{data.currentLogs.totalTime[4]}h</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Saturday</td>
+                                                                <td>{data.currentLogs.totalLog[5]}</td>
+                                                                <td className="text-end">{data.currentLogs.totalTime[5]}h</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Sunday</td>
+                                                                <td>{data.currentLogs.totalLog[6]}</td>
+                                                                <td className="text-end">{data.currentLogs.totalTime[6]}h</td>
+                                                            </tr>
+                                                        </>):''}
                                                     </tbody>
                                                 </table>
                                             </div>
