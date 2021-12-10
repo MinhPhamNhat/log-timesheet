@@ -53,6 +53,7 @@ const Log = (props) => {
 
     if (subtask.code == SUCCESS) {
       setSubtaskList(subtask.subtasks);
+      setSubtaskId(subtask.subtasks[0].SubtaskId)
     }
 
     if (log.code == UNAUTHENTICATED || subtask.code == UNAUTHENTICATED) {
@@ -294,6 +295,7 @@ const Log = (props) => {
                                         <select
                                           name=""
                                           className="form-select"
+                                          value={subtaskId}
                                           onChange={(e) =>
                                             setSubtaskId(e.target.value)
                                           }
