@@ -34,6 +34,7 @@ const Log = (props) => {
       case SUCCESS:
         setRedirect(true)
         NotificationManager.success("Successfully approve", 'Approve',  3000);
+        await getAllLogs();
         break;
       default:
         NotificationManager.error(res.message, 'Approve',  3000);
@@ -418,8 +419,8 @@ const Log = (props) => {
                                 <td>{p.DateApproved ? p.DateApproved : ""}</td>
                                 <td>
                                   {user.user.Role===2?'':(!p.IsApproved?<>
-                                    <Button variant="outline-success">
-                                        <i className="fas fa-check" onClick={()=>handleApprove(p.LogId)}></i>
+                                    <Button variant="outline-success" onClick={()=>handleApprove(p.LogId)}>
+                                        <i className="fas fa-check"></i>
                                     </Button>
                                   </>:'')}
                                 </td>
