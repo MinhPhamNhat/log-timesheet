@@ -24,7 +24,6 @@ const SubtaskEditForm = (props) => {
             setSelectedProject(subtask.subtask.Project.ProjectId)
         }
     }, [project, subtask])
-
     const handleSubmit = async () => {
         const data = {
             Name: name,
