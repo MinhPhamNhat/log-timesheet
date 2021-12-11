@@ -14,7 +14,6 @@ const Subtask = (props) => {
     const [subtasks, setSubtasks] = useState([])
     const [show, setShow] = useState(false);
     const [currId, setCurrId] = useState(null)
-    const [redirect, setRedirect] = useState(false)
     const handleClose = () => setShow(false);
     const handleShow = (id) => {
         setCurrId(id)
@@ -28,7 +27,8 @@ const Subtask = (props) => {
         }else if (res.code === FORBIDDEN){
             NotificationManager.error(res.message, 'Access denied',  3000);
         }else if (res.code === SUCCESS){
-            setRedirect(true)
+            NotificationManager.success(res.message, 'Delete Successfully',  3000);
+            await getAllSubtask()
         }else if (res.code === SERVER_ERROR){
             NotificationManager.error(res.message, 'Internal Exception',  3000);
         }
@@ -46,9 +46,6 @@ const Subtask = (props) => {
     
     if (!loggedIn) {
         return <Navigate to="/login" />
-    }
-    if (redirect){
-        return <Navigate to="/subtask" />
     }
     return (
         <div className="subtask-page">

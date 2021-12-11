@@ -4,6 +4,7 @@ import { Navigate, } from 'react-router-dom'
 import { Sidebar } from '../general'
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 import { exceptionConstants } from '../../constants'
+import Select from 'react-select'
 
 const { BAD_REQUEST, SERVER_ERROR, PAGE_NOT_FOUND, SUCCESS, FORBIDDEN } = exceptionConstants
 
@@ -18,6 +19,8 @@ const FormHandleProject = (props) => {
     const [manager, setManager] = useState(null)
     const [managerList, setManagerList] = useState([])
     const [redirect, setRedirect] = useState(false)
+    const [staff, setStaff] = useState([])
+    const [selectedStaff, setSelectedStaff] = useState([])
 
     const handleSubmit = async () => {
         const data = {
@@ -27,9 +30,9 @@ const FormHandleProject = (props) => {
             Manager: manager==="null"?null:manager,
             StartDate: new Date(startDate).toLocaleString(),
             EndDate: new Date(endDate).toLocaleString(),
+            Staff: selectedStaff.map(s=>s.value)
         }
         const res = await editProject(id, data)
-        console.log(res)
         switch(res.code){
             case SUCCESS:
                 NotificationManager.success('Update successfully', 'Success',  3000);
@@ -48,7 +51,16 @@ const FormHandleProject = (props) => {
                 break;
         }
     }
+
+    const handleStaffSelected = (selectedOpt) => {
+        setSelectedStaff(selectedOpt)
+    }
+    
     useEffect(()=>{
+        if (user.code === SUCCESS){
+            setManagerList(user.managers);
+            setStaff(user.staff)
+        }
         if(project.code !== null){
             setName(project.project.Name)
             setCode(project.project.ProjectCode)
@@ -56,10 +68,24 @@ const FormHandleProject = (props) => {
             setEndDate(project.project.EndDate)
             setType(project.project.Type)
             setManager(project.project.Manager?project.project.Manager.UserId:"null")
-            setManagerList(user.managers)
+            setSelectedStaff(parseSelectedStaff(project.project.ProjectUsers))
         }
-    }, [project])
+    }, [project.project, user.staff, user.managers])
     
+    const parseSelectedStaff = (selectedOpt) => {
+        return selectedOpt.map(_=>{
+            if (user.staff){
+                var currStaff = user.staff.filter(s=> s.UserId === _.UserId)
+                if (currStaff.length){
+                    console.log(currStaff)
+                    return {
+                        value: currStaff[0].UserId, 
+                        label: currStaff[0].Name
+                    } 
+                }
+            }
+        })
+    }
     const back = () => {
         setRedirect(true)
     }
@@ -168,6 +194,20 @@ const FormHandleProject = (props) => {
                                                     <div className="">
                                                         <input onChange={(e) => setEndDate(e.target.value)} value={endDate?(new Date(endDate).toISOString().split('T')[0]):""} type="date" className="form-control datepicker-here" data-language="en" aria-describedby="datepicker" placeholder="End Time"/>
                                                     </div>
+                                                </div>
+                                            </div>
+                                            <div className="line"></div><br/>
+                                            <div className="mb-3 row">
+                                                <label className="col-md-2">Staff</label>
+                                                <div className="col-md-10 select">
+                                                    <Select 
+                                                    value={selectedStaff}
+                                                    onChange={handleStaffSelected}
+                                                    isDisabled={type}
+                                                    closeMenuOnSelect={false}
+                                                    isMulti
+                                                    options={staff?staff.map(s=>{return {value: s.UserId, label: s.Name}}):[]}
+                                                    />
                                                 </div>
                                             </div>
                                             <div className="line"></div><br/>

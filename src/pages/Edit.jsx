@@ -2,13 +2,13 @@ import React, { useState, useEffect, } from 'react';
 import { Navigate, useParams } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { Sidebar } from '../components/general'
-import { getManager, editProject, getProjectById } from '../actions'
+import { getManager, editProject, getProjectById, getStaff } from '../actions'
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 import { Error } from '../pages'
 import { FormHandleProject } from '../components/project'
 
 const Edit = (props) => {
-    const { user, getManager, editProject, getProjectById } = props
+    const { user, getManager, editProject, getProjectById, getStaff } = props
     const { loggedIn } = user
     // get query id
     const query = new URLSearchParams(window.location.search)
@@ -19,6 +19,7 @@ const Edit = (props) => {
     useEffect(async () => {
         await getManager()
         await getProjectById(id)
+        await getStaff()
     }, []);
     
     
@@ -37,6 +38,7 @@ const mapDispatchToProps = (dispatch) => {
         getManager: () => dispatch(getManager()),
         editProject: (id, data) => dispatch(editProject(id, data)),
         getProjectById: (id) => dispatch(getProjectById(id)),
+        getStaff: () => dispatch(getStaff())
     }
 }
 

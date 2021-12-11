@@ -2,20 +2,30 @@ import React, { useState, useEffect, } from 'react';
 import { Navigate, } from 'react-router-dom'
 import { connect } from 'react-redux'
 import {Sidebar} from '../components/general'
-import { getManager, addProject } from '../actions'
+import { getManager, addProject, getStaff } from '../actions'
 import { exceptionConstants } from '../constants'
 import {NotificationContainer, NotificationManager} from 'react-notifications';
-
-const { BAD_REQUEST, SERVER_ERROR, PAGE_NOT_FOUND, CREATED } = exceptionConstants
+import Select from 'react-select'
+const { BAD_REQUEST, SERVER_ERROR, PAGE_NOT_FOUND, CREATED, SUCCESS } = exceptionConstants
 
 const Add = (props) => {
-    const { user, getManager, addProject } = props
+    const { user, getManager, addProject, getStaff } = props
     const { loggedIn } = user
     const role = parseRole(user.user.Role)
+
     const [managers, setManagers] = useState([])
+    const [staff, setStaff] = useState([])
+
     useEffect(async () => {
-        setManagers(await getManager());
+        await getManager();
+        await getStaff()
       }, []);
+    useEffect(()=>{
+        if (user.code === SUCCESS){
+            setManagers(user.managers);
+            setStaff(user.staff)
+        }
+    }, [user.staff, user.managers])
 
     const [name, setName] = useState("")
     const [code, setCode] = useState("")
@@ -24,6 +34,9 @@ const Add = (props) => {
     const [endDate, setEndDate] = useState("")
     const [manager, setManager] = useState(null)
     const [redirect, setRedirect] = useState(false)
+    const [selectedStaff, setSelectedStaff] = useState([])
+    
+
     const handleSubmit = async () => {
         const data = {
             Name: name,
@@ -32,6 +45,7 @@ const Add = (props) => {
             Manager: manager==="null"?null:manager,
             StartDate: new Date(startDate).toLocaleString(),
             EndDate: new Date(endDate).toLocaleString(),
+            Staff: selectedStaff.map(s=>s.value)
         }
         const res = await addProject(data)
         switch(res.code){
@@ -45,9 +59,14 @@ const Add = (props) => {
                 NotificationManager.warning(res.message, 'Not Found',  3000);
                 break;
             case SERVER_ERROR:
+                console.log(res)
                 NotificationManager.error(res.message, 'Internal Error',  3000);
                 break;
         }
+    }
+
+    const handleStaffSelected = (selectedOpt) => {
+        setSelectedStaff(selectedOpt)
     }
     const back = () => {
         setRedirect(true)
@@ -164,11 +183,24 @@ const Add = (props) => {
                                             </div>
                                             <div className="line"></div><br/>
                                             <div className="mb-3 row">
+                                                <label className="col-md-2">Staff</label>
+                                                <div className="col-md-10 select">
+                                                    <Select 
+                                                    onChange={handleStaffSelected}
+                                                    isDisabled={type}
+                                                    closeMenuOnSelect={false}
+                                                    isMulti
+                                                    options={staff?staff.map(s=>{return {value: s.UserId, label: s.Name}}):[]}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="line"></div><br/>
+                                            <div className="mb-3 row">
                                                 <label className="col-md-2">Manager</label>
                                                 <div className="col-md-10 select">
                                                     <select name="" onChange={(e) => setManager(e.target.value)} disabled={type} className="form-select">
                                                         <option value="null">None</option>
-                                                        {managers.data?managers.data.data.map(m => {
+                                                        {managers?managers.map(m => {
                                                             return (
                                                                 <option value={m.UserId}>{m.Name}</option>
                                                             )
@@ -200,6 +232,7 @@ const mapDispatchToProps = (dispatch) => {
     return {
         getManager: () => dispatch(getManager()),
         addProject: (data) => dispatch(addProject(data)),
+        getStaff: () => dispatch(getStaff())
     }
 }
 
