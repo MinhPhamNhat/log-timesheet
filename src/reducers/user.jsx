@@ -2,7 +2,7 @@ import { authConstants, userConstants } from "../constants";
 
 const { LOGIN_SUCCESS, LOGIN_FAILURE, LOGOUT } = authConstants;
 
-const { VERIFY_USER_TOKEN, GET_MANAGER, GET_ALL_USER, GET_USER_BY_ID } = userConstants;
+const { VERIFY_USER_TOKEN, GET_MANAGER, GET_ALL_USER, GET_USER_BY_ID, GET_STAFF } = userConstants;
 
 const userAuth = JSON.parse(localStorage.getItem("user"));
 const token = localStorage.getItem("token");
@@ -52,6 +52,12 @@ const user = (state = initialState, action) => {
       return {
         ...state,
         users: action.payload.users,
+        code: action.payload.code,
+      }
+    case GET_STAFF:
+      return {
+        ...state,
+        staff: action.payload.staff,
         code: action.payload.code,
       }
     default:

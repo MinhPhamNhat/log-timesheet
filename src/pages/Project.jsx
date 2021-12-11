@@ -9,13 +9,12 @@ import { exceptionConstants } from '../constants'
 const { SERVER_ERROR, SUCCESS, PAGE_NOT_FOUND, FORBIDDEN } = exceptionConstants
 
 const Project =  (props) => {
-    const { user, getAllProjects, deleteProject } = props
+    const { user, project,  getAllProjects, deleteProject } = props
     const role = parseRole(user.user.Role)
     const { loggedIn } = user
-    const [projectRes, setProjectRes] = useState([])
+    const [projects, setProjects] = useState([])
     const [show, setShow] = useState(false);
     const [currId, setCurrId] = useState(null)
-    const [redirect, setRedirect] = useState(false)
     const handleClose = () => setShow(false);
     const handleShow = (id) => {
         setCurrId(id)
@@ -29,18 +28,21 @@ const Project =  (props) => {
         }else if (res.code === FORBIDDEN){
             NotificationManager.error(res.message, 'Access denied',  3000);
         }else if (res.code === SUCCESS){
-            setRedirect(true)
+            NotificationManager.success(res.message, 'Delete Successfully',  3000);
+            await getAllProjects()
         }else if (res.code === SERVER_ERROR){
             NotificationManager.error(res.message, 'Internal Exception',  3000);
         }
     }
     useEffect(async () => {
-        setProjectRes(await getAllProjects());
+        await getAllProjects();
       }, []);
-
-    if (redirect){
-        return <Navigate to="/project" />
-    }
+    
+    useEffect(()=>{
+        if (project.code !== null){
+            setProjects(project.projects)
+        }
+    }, [project])
     if (!loggedIn) {
         return <Navigate to="/login" />
     }
@@ -119,7 +121,7 @@ const Project =  (props) => {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {projectRes.data?projectRes.data.data.map(p => {
+                                            {projects?projects.map(p => {
                                                 return (
                                                     <tr key={p.ProjectId}>
                                                         <td>{p.ProjectId}</td>
@@ -177,6 +179,7 @@ const mapDispatchToProps = (dispatch) => {
 
 const mapStateToProps = (state) => ({
     user: state.user,
+    project: state.project
 })
 const parseRole = (role)=>{
     if (role === 0){
