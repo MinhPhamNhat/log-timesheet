@@ -44,12 +44,12 @@ const Dashboard = (props) => {
     const paginationElement = pageNumbers.map(number => {
         if (number == currentPage) {
             return (
-                <li class="page-item active" onClick={() => handleSubmitPage(number)} key={number}><a class="page-link" href="#">{number}</a></li>
+                <li className="page-item active" onClick={() => handleSubmitPage(number)} key={number}><a className="page-link" href="#">{number}</a></li>
             )
         }
         else {
             return (
-                <li class="page-item" onClick={() => handleSubmitPage(number)} key={number}><a class="page-link" href="#">{number}</a></li>
+                <li className="page-item" onClick={() => handleSubmitPage(number)} key={number}><a className="page-link" href="#">{number}</a></li>
             )
         }
     });
@@ -83,7 +83,18 @@ const Dashboard = (props) => {
                         </button>
                         <div className="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul className="nav navbar-nav ms-auto">
-                                
+                                <li className="nav-item dropdown">
+                                    <div className="nav-dropdown">
+                                        <a href="#" id="nav2" className="nav-item nav-link dropdown-toggle text-secondary" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i className="fas fa-user"></i> <span>{user.user.Name} - {user.user.Role === 0 ? 'Admin' : user.user.Role  === 1 ? 'PM' : 'Staff'}</span> <i style={{fontSize: ".8em"}} className="fas fa-caret-down"></i>
+                                        </a>
+                                        <div className="dropdown-menu dropdown-menu-end nav-link-menu">
+                                            <ul className="nav-list">
+                                                <li><a href="" className="dropdown-item"><i className="fas fa-sign-out-alt"></i> Logout</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
                             </ul>
                         </div>
                     </nav>
@@ -203,7 +214,7 @@ const Dashboard = (props) => {
                                         <div className="content">
                                             <div className="head">
                                                 <h5 className="mb-0">Log Time Sheet Current Week</h5>
-                                                <p className="text-muted">1/11/2021 - 7/11/2021</p>
+                                                <p className="text-muted">{getMonday(new Date()).toDateString()} - {getSunday(new Date()).toDateString()}</p>
                                             </div>
                                             <div className="canvas-wrapper">
                                                 <table className="table table-striped">
@@ -314,11 +325,9 @@ const Dashboard = (props) => {
                                                                                                 </div>
                                                                                             </form>
                                                                                         </div>
-
                                                                                         <div className="modal-footer">
                                                                                             <button type="button" className="btn btn-danger" data-dismiss="modal">Cancel</button>
                                                                                         </div>
-
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -334,9 +343,9 @@ const Dashboard = (props) => {
                                         <div className="d-flex justify-content-center">
                                             <nav aria-label="Pagination">
                                                 <ul className="pagination">
-                                                    <li class="page-item" onClick={() => handlePreviousPagination()}><a class="page-link" href="#">Previous</a></li>
+                                                    <li className="page-item" onClick={() => handlePreviousPagination()}><a className="page-link" href="#">Previous</a></li>
                                                     {paginationElement}
-                                                    <li class="page-item" onClick={() => handleNextPagination()}><a class="page-link" href="#">Next</a></li>
+                                                    <li className="page-item" onClick={() => handleNextPagination()}><a className="page-link" href="#">Next</a></li>
                                                 </ul>
                                             </nav>
                                         </div>
@@ -427,4 +436,19 @@ const parseRole = (role)=>{
         return { log: true, project: true, subtask: true }
     }
   }
+
+function getMonday(d) {
+d = new Date(d);
+var day = d.getDay(),
+    diff = d.getDate() - day + (day == 0 ? -6:1) ; // adjust when day is sunday
+return new Date(d.setDate(diff));
+}
+
+function getSunday(d) {
+    d = new Date(d);
+    var day = d.getDay(),
+        diff = d.getDate() - day + (day == 0 ? -6:1) + 6; // adjust when day is sunday
+    return new Date(d.setDate(diff));
+    }
+
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard)
