@@ -1,7 +1,7 @@
 import React, { useState, useEffect, } from 'react';
 import { Navigate, } from 'react-router-dom'
 import { connect } from 'react-redux'
-import {Sidebar} from '../components/general'
+import {Sidebar, Logout} from '../components/general'
 import { getManager, addProject, getStaff } from '../actions'
 import { exceptionConstants } from '../constants'
 import {NotificationContainer, NotificationManager} from 'react-notifications';
@@ -93,11 +93,7 @@ const Add = (props) => {
                                         <a href="#" id="nav2" className="nav-item nav-link dropdown-toggle text-secondary" data-bs-toggle="dropdown" aria-expanded="false">
                                             <i className="fas fa-user"></i> <span>{user.user.Name} - {user.user.Role === 0 ? 'Admin' : user.user.Role  === 1 ? 'PM' : 'Staff'}</span> <i style={{fontSize: ".8em"}} className="fas fa-caret-down"></i>
                                         </a>
-                                        <div className="dropdown-menu dropdown-menu-end nav-link-menu">
-                                            <ul className="nav-list">
-                                                <li><a href="" className="dropdown-item"><i className="fas fa-sign-out-alt"></i> Logout</a></li>
-                                            </ul>
-                                        </div>
+                                        <Logout />
                                     </div>
                                 </li>
                             </ul>

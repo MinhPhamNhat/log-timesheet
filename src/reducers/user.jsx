@@ -9,7 +9,7 @@ const token = localStorage.getItem("token");
 
 const initialState = token
   ? { loggedIn: true, user: userAuth, code: 200, users: [] }
-  : { loggedIn: false, user: null, code: 401, users: [] };
+  : { loggedIn: false, user: {role : ''}, code: 401, users: [] };
 
 const user = (state = initialState, action) => {
   switch (action.type) {
