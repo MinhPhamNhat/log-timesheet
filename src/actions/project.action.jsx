@@ -22,6 +22,24 @@ export const getAllProjects = () => {
   }
 }
 
+export const getAllProjectsFilter = (limit, page) => {
+  return async function (dispatch) {
+    const response = await ProjectService.getAllFilter(limit, page)
+    const { code, data } = response
+    await dispatch(checkAuthentication(code))
+    if (code == SUCCESS)
+    dispatch({
+      type: GET_ALL,
+      payload: {
+        code,
+        projects: data.data
+      }
+    })
+    return response
+  }
+}
+
+
 export const addProject = (payload) => {
     return async function (dispatch) {
       const response = await ProjectService.addProject(payload)

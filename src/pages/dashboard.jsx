@@ -3,23 +3,29 @@ import {Sidebar} from '../components/general'
 
 import { Navigate } from 'react-router-dom'
 import { getStatistic } from '../actions/dashboard.action'
-import { getAllProjects } from '../actions/project.action'
+import { getAllProjects, getAllProjectsFilter } from '../actions/project.action'
 import { connect } from 'react-redux'
 const Dashboard = (props) => {
-    const { user, project, dashboard, getStatistic, getAllProjects } = props
+    const { user, project, dashboard, getStatistic, getAllProjectsFilter } = props
     const { loggedIn } = user
     const role = parseRole(user.user.Role)
     const [data, setData] = useState({})
+    const [limit, setLimit] = useState(10)
+    const [page, setPage] = useState(0)
+    const [projectPagination, setProjectPagination] = useState([])
+    const [currentPage, setCurrentPage] = useState(1)
+
     const [projects, setProjects] = useState([])
     
     useEffect(async () => {
         await getStatistic()
-        setProjects(await getAllProjects())
+        await getAllProjectsFilter(limit, currentPage)
     }, [])
 
     useEffect(()=>{
         if (dashboard.code !== null ){
             setData(dashboard.dashboard)
+            setPage(Math.floor(parseInt(dashboard.dashboard.countProject) / limit) + 1)
         }
         if (project.code !== null){
             setProjects(project.projects)
@@ -28,6 +34,43 @@ const Dashboard = (props) => {
 
     if (!loggedIn) {
         return <Navigate to="/login" />
+    }
+
+    const pageNumbers = [];
+    for (let i = 1; i <= page; i++) {
+        pageNumbers.push(i);
+    }
+
+    const paginationElement = pageNumbers.map(number => {
+        if (number == currentPage) {
+            return (
+                <li class="page-item active" onClick={() => handleSubmitPage(number)} key={number}><a class="page-link" href="#">{number}</a></li>
+            )
+        }
+        else {
+            return (
+                <li class="page-item" onClick={() => handleSubmitPage(number)} key={number}><a class="page-link" href="#">{number}</a></li>
+            )
+        }
+    });
+
+    const handleSubmitPage = async(number) => {
+        setCurrentPage(number)
+        await getAllProjectsFilter(limit, number)
+    }
+
+    const handlePreviousPagination = async() => {
+        if (currentPage != 1) {
+            setCurrentPage(currentPage - 1)
+            await getAllProjectsFilter(limit, currentPage - 1)
+        }
+    }
+
+    const handleNextPagination = async() => {
+        if (currentPage != page) {
+            setCurrentPage(currentPage + 1)
+            await getAllProjectsFilter(limit, currentPage + 1)
+        }
     }
     return (
         <div className="dashboard-page">
@@ -293,7 +336,7 @@ const Dashboard = (props) => {
                                                                                                         <tbody>
                                                                                                             {p.ProjectUsers.map(u=>{
                                                                                                                 return (
-                                                                                                                    <tr>
+                                                                                                                    <tr key={u.UserId}>
                                                                                                                         <td className="text-start">{u.UserId}</td>
                                                                                                                     </tr>
                                                                                                                 )
@@ -320,6 +363,15 @@ const Dashboard = (props) => {
                                                     </tbody>
                                                 </table>
                                             </div>
+                                        </div>
+                                        <div className="d-flex justify-content-center">
+                                            <nav aria-label="Pagination">
+                                                <ul className="pagination">
+                                                    <li class="page-item" onClick={() => handlePreviousPagination()}><a class="page-link" href="#">Previous</a></li>
+                                                    {paginationElement}
+                                                    <li class="page-item" onClick={() => handleNextPagination()}><a class="page-link" href="#">Next</a></li>
+                                                </ul>
+                                            </nav>
                                         </div>
                                     </div>
                                 </div>
@@ -389,7 +441,8 @@ const Dashboard = (props) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         getStatistic: () => dispatch(getStatistic()),
-        getAllProjects: () => dispatch(getAllProjects())
+        getAllProjects: () => dispatch(getAllProjects()),
+        getAllProjectsFilter: (limit, page) => dispatch(getAllProjectsFilter(limit, page)),
     }
 }
 
