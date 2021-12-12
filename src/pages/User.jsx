@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import {Sidebar} from '../components/general'
-import { connect } from "react-redux";
+import {Sidebar, Logout} from '../components/general'
+import { connect } from "react-redux"
+import { Navigate } from 'react-router-dom'
 
 import { getAllUsers } from '../actions'
 
@@ -11,6 +12,7 @@ const { UNAUTHENTICATED, SUCCESS } = exceptionConstants;
 const User = (props) => {
 
     const { getAllUsers, user } = props
+    const { loggedIn } = user
     const role = parseRole(user.user.Role)
     const [userList, setUserList] = useState([])
     const [isShowErrorPage, enableShowError] = useState(false)
@@ -37,6 +39,10 @@ const User = (props) => {
         )
     }
 
+    if (!loggedIn) {
+        return <Navigate to="/login" />
+    }
+
     return (
         <div className="user-page">
             <div className="wrapper">
@@ -53,11 +59,7 @@ const User = (props) => {
                                         <a href="#" id="nav2" className="nav-item nav-link dropdown-toggle text-secondary" data-bs-toggle="dropdown" aria-expanded="false">
                                             <i className="fas fa-user"></i> <span>{user.user.Name} - {user.user.Role === 0 ? 'Admin' : user.user.Role  === 1 ? 'PM' : 'Staff'}</span> <i style={{fontSize: ".8em"}} className="fas fa-caret-down"></i>
                                         </a>
-                                        <div className="dropdown-menu dropdown-menu-end nav-link-menu">
-                                            <ul className="nav-list">
-                                                <li><a href="" className="dropdown-item"><i className="fas fa-sign-out-alt"></i> Logout</a></li>
-                                            </ul>
-                                        </div>
+                                        <Logout />
                                     </div>
                                 </li>
                             </ul>

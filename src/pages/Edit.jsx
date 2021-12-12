@@ -1,10 +1,7 @@
-import React, { useState, useEffect, } from 'react';
-import { Navigate, useParams } from 'react-router-dom'
+import React, {useEffect} from 'react';
+import { Navigate } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { Sidebar } from '../components/general'
 import { getManager, editProject, getProjectById, getStaff } from '../actions'
-import { NotificationContainer, NotificationManager } from 'react-notifications';
-import { Error } from '../pages'
 import { FormHandleProject } from '../components/project'
 
 const Edit = (props) => {
