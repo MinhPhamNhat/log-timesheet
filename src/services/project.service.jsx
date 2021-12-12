@@ -8,6 +8,12 @@ class ProjectService {
         return response
     }
 
+    async getAllFilter(limit, page) {
+        const endpoint = `Projects?page=${page}&limit=${limit}`
+        const response = await Repository.get(endpoint)
+        return response
+    }
+
     async getProjectById(id) {
         const endpoint = `/Projects/${id}`
         const response = await Repository.get(endpoint)
