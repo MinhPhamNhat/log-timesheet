@@ -13,7 +13,6 @@ const SubtaskEditForm = (props) => {
     const [selectedProject, setSelectedProject] = useState("")
     const [name, setName] = useState("")
     const [redirect, setRedirect] = useState(false)
-
     
     useEffect(()=>{
         if (project.code === SUCCESS){
@@ -24,6 +23,7 @@ const SubtaskEditForm = (props) => {
             setSelectedProject(subtask.subtask.Project.ProjectId)
         }
     }, [project, subtask])
+    
     const handleSubmit = async () => {
         const data = {
             Name: name,

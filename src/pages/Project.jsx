@@ -58,40 +58,6 @@ const Project =  (props) => {
                         </button>
                         <div className="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul className="nav navbar-nav ms-auto">
-                                <li className="nav-item dropdown">
-                                    <div className="nav-dropdown">
-                                        <a href="#" id="nav1" className="nav-item nav-link dropdown-toggle text-secondary" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i className="fas fa-link"></i> <span>Quick Links</span> <i style={{fontSize: ".8em"}} className="fas fa-caret-down"></i>
-                                        </a>
-                                        <div className="dropdown-menu dropdown-menu-end nav-link-menu" aria-labelledby="nav1">
-                                            <ul className="nav-list">
-                                                <li><a href="" className="dropdown-item"><i className="fas fa-list"></i> Access Logs</a></li>
-                                                <div className="dropdown-divider"></div>
-                                                <li><a href="" className="dropdown-item"><i className="fas fa-database"></i> Back ups</a></li>
-                                                <div className="dropdown-divider"></div>
-                                                <li><a href="" className="dropdown-item"><i className="fas fa-cloud-download-alt"></i> Updates</a></li>
-                                                <div className="dropdown-divider"></div>
-                                                <li><a href="" className="dropdown-item"><i className="fas fa-user-shield"></i> Roles</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li className="nav-item dropdown">
-                                    <div className="nav-dropdown">
-                                        <a href="#" id="nav2" className="nav-item nav-link dropdown-toggle text-secondary" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i className="fas fa-user"></i> <span>John Doe</span> <i style={{fontSize: ".8em"}} className="fas fa-caret-down"></i>
-                                        </a>
-                                        <div className="dropdown-menu dropdown-menu-end nav-link-menu">
-                                            <ul className="nav-list">
-                                                <li><a href="" className="dropdown-item"><i className="fas fa-address-card"></i> Profile</a></li>
-                                                <li><a href="" className="dropdown-item"><i className="fas fa-envelope"></i> Messages</a></li>
-                                                <li><a href="" className="dropdown-item"><i className="fas fa-cog"></i> Settings</a></li>
-                                                <div className="dropdown-divider"></div>
-                                                <li><a href="" className="dropdown-item"><i className="fas fa-sign-out-alt"></i> Logout</a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </li>
                             </ul>
                         </div>
                     </nav>
@@ -99,7 +65,9 @@ const Project =  (props) => {
                         <div className="container">
                             <div className="page-title">
                                 <h3>Projects
+                                {user.user?(user.user.Role===0?(<>
                                     <a href="add" className="btn btn-sm btn-outline-primary float-end"><i className="fas fa-plus-circle"></i> Add</a>
+                                                            </>):''):''}
                                     <a href="/" className="btn btn-sm btn-outline-info float-end me-1"><i className="fas fa-angle-left"></i> <span className="btn-header">Return</span></a>
                                 </h3>
                             </div>
@@ -134,10 +102,12 @@ const Project =  (props) => {
                                                         <td>{p.Manager?p.Manager.Name:'Không'}</td>
                                                         <td>{p.ProjectUsers.length}</td>
                                                         <td className="text-end">
-                                                            <a href={"/edit?id="+p.ProjectId} className="btn btn-outline-info btn-rounded"><i className="fas fa-pen"></i></a>
-                                                            <Button variant="outline-danger" onClick={()=>handleShow(p.ProjectId)}>
-                                                                <i className="fas fa-trash"></i>
-                                                            </Button>
+                                                            {user.user?(user.user.Role===0?(<>
+                                                                <a href={"/edit?id="+p.ProjectId} className="btn btn-outline-info btn-rounded"><i className="fas fa-pen"></i></a>
+                                                                <Button variant="outline-danger" onClick={()=>handleShow(p.ProjectId)}>
+                                                                    <i className="fas fa-trash"></i>
+                                                                </Button>
+                                                            </>):''):''}
                                                         </td>
                                                     </tr>
                                                     )
@@ -185,9 +155,9 @@ const parseRole = (role)=>{
     if (role === 0){
         return { log: true, project: true, subtask: true, user: true }
     }else if(role === 1){
-        return { log: true, project: true, subtask: true }
+        return { log: true, project: true, subtask: true, user: true }
     }else if(role === 2){
-        return { log: true }
+        return { log: true, project: true, subtask: true }
     }
   }
 export default connect(mapStateToProps, mapDispatchToProps)(Project)

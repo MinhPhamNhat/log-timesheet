@@ -1,7 +1,7 @@
 import { exceptionConstants, logConstants } from "../constants";
 import { LogService } from "../services";
 
-const { GET_ALL_LOGS, CREATE_LOG, APPROVE_LOG, DISAPPROVE_LOG } = logConstants;
+const { GET_ALL_LOGS, CREATE_LOG, APPROVE_LOG, DISAPPROVE_LOG, DELETE_LOG } = logConstants;
 
 const { UNAUTHENTICATED, SUCCESS, CREATED } = exceptionConstants;
 
@@ -101,6 +101,14 @@ export const disapproveLog = (id) => {
         },
       });
     }
+    return response;
+  };
+};
+
+export const deleteLog = (id) => {
+  return async function (dispatch) {
+    const response = await LogService.deleteLog(id);
+    const { code, data } = response;
     return response;
   };
 };
