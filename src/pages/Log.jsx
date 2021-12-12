@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { Navigate } from "react-router-dom";
 import { exceptionConstants } from "../constants";
 import { Button, Modal } from 'react-bootstrap'
-import { getAllLogs, getAllSubtask, approveLog, disapproveLog } from '../actions'
+import { getAllLogs, getAllSubtask, approveLog, disapproveLog, deleteLog } from '../actions'
 import {NotificationContainer, NotificationManager} from 'react-notifications';
 
 import { Error } from "../pages";
@@ -13,12 +13,14 @@ import { LogService } from "../services";
 
 const { UNAUTHENTICATED, SUCCESS, PAGE_NOT_FOUND, SERVER_ERROR, CREATED } = exceptionConstants;
 const Log = (props) => {
-  const { getAllLogs, getAllSubtask, log, subtask, user, approveLog, disapproveLog } = props
+  const { getAllLogs, getAllSubtask, log, subtask, user, approveLog, deleteLog } = props
   const role = parseRole(user.user.Role)
   const [logList, setLogList] = useState([])
   const [subtaskList, setSubtaskList] = useState([])
   const [isShowErrorPage, enableShowError] = useState(false)
   const [redirect, setRedirect] = useState(false)
+  const [show, setShow] = useState(false);
+  const [currId, setCurrId] = useState(null)
 
   const userAuth = JSON.parse(localStorage.getItem("user"));
 
@@ -26,8 +28,12 @@ const Log = (props) => {
   const [stdTime, setStdTime] = useState(0)
   const [overTime, setOverTime] = useState(0)
   const [subtaskId, setSubtaskId] = useState(null)
+  const handleShow = (id) => {
+    setCurrId(id)
+    setShow(true)
+  };
 
-
+  const handleClose = () => setShow(false);
   const handleApprove = async (id) => {
     const res = await approveLog(id)
     switch (res.code){
@@ -39,6 +45,18 @@ const Log = (props) => {
       default:
         NotificationManager.error(res.message, 'Approve',  3000);
         break;
+    }
+  }
+
+  const handleDelete = async () => {
+    const res = await deleteLog(currId)
+    if (res.code === SUCCESS){
+      await getAllLogs();
+      setShow(false)
+      NotificationManager.success("Successfully", 'Remove Log',  3000);
+    }else {
+      console.log(res)
+      NotificationManager.error(res.message, 'Remove Log',  3000);
     }
   }
 
@@ -115,96 +133,6 @@ const Log = (props) => {
               id="navbarSupportedContent"
             >
               <ul className="nav navbar-nav ms-auto">
-                <li className="nav-item dropdown">
-                  <div className="nav-dropdown">
-                    <a
-                      href="#"
-                      id="nav1"
-                      className="nav-item nav-link dropdown-toggle text-secondary"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                    >
-                      <i className="fas fa-link"></i> <span>Quick Links</span>{" "}
-                      <i
-                        style={{ fontSize: ".8rem" }}
-                        className="fas fa-caret-down"
-                      ></i>
-                    </a>
-                    <div
-                      className="dropdown-menu dropdown-menu-end nav-link-menu"
-                      aria-labelledby="nav1"
-                    >
-                      <ul className="nav-list">
-                        <li>
-                          <a href="" className="dropdown-item">
-                            <i className="fas fa-list"></i> Access Logs
-                          </a>
-                        </li>
-                        <div className="dropdown-divider"></div>
-                        <li>
-                          <a href="" className="dropdown-item">
-                            <i className="fas fa-database"></i> Back ups
-                          </a>
-                        </li>
-                        <div className="dropdown-divider"></div>
-                        <li>
-                          <a href="" className="dropdown-item">
-                            <i className="fas fa-cloud-download-alt"></i>{" "}
-                            Updates
-                          </a>
-                        </li>
-                        <div className="dropdown-divider"></div>
-                        <li>
-                          <a href="" className="dropdown-item">
-                            <i className="fas fa-user-shield"></i> Roles
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </li>
-                <li className="nav-item dropdown">
-                  <div className="nav-dropdown">
-                    <a
-                      href="#"
-                      id="nav2"
-                      className="nav-item nav-link dropdown-toggle text-secondary"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                    >
-                      <i className="fas fa-user"></i> <span>John Doe</span>{" "}
-                      <i
-                        style={{ fontSize: ".8rem" }}
-                        className="fas fa-caret-down"
-                      ></i>
-                    </a>
-                    <div className="dropdown-menu dropdown-menu-end nav-link-menu">
-                      <ul className="nav-list">
-                        <li>
-                          <a href="" className="dropdown-item">
-                            <i className="fas fa-address-card"></i> Profile
-                          </a>
-                        </li>
-                        <li>
-                          <a href="" className="dropdown-item">
-                            <i className="fas fa-envelope"></i> Messages
-                          </a>
-                        </li>
-                        <li>
-                          <a href="" className="dropdown-item">
-                            <i className="fas fa-cog"></i> Settings
-                          </a>
-                        </li>
-                        <div className="dropdown-divider"></div>
-                        <li>
-                          <a href="" className="dropdown-item">
-                            <i className="fas fa-sign-out-alt"></i> Logout
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </li>
               </ul>
             </div>
           </nav>
@@ -218,7 +146,7 @@ const Log = (props) => {
                   <div className="card">
                     <div className="card-header row">
                       <div className="page-title row">
-                        <div className="col-md-1 col-lg-1">Date</div>
+                        {/* <div className="col-md-1 col-lg-1">Date</div>
                         <div className="col-lg-2 col-md-2">
                           <form>
                             <div className="mb-3">
@@ -231,7 +159,7 @@ const Log = (props) => {
                               />
                             </div>
                           </form>
-                        </div>
+                        </div> */}
                         <div className="col-lg-12 col-md-12">
                           {/* <a href="" className="btn btn-sm btn-outline-primary float-end"><i className="fas fa-plus-circle"></i> Log Time</a>  */}
                           <button
@@ -281,7 +209,7 @@ const Log = (props) => {
                                     <div className="mb-3 row">
                                       <label className="col-md-2">User</label>
                                       <div className="col-md-10 select">
-                                        <select name="" className="form-select">
+                                        <select name="" value={userAuth.UserId} className="form-select">
                                           <option value={userAuth.UserId}>
                                             {userAuth.Name}
                                           </option>
@@ -418,6 +346,9 @@ const Log = (props) => {
                                 </td>
                                 <td>{p.DateApproved ? p.DateApproved : ""}</td>
                                 <td>
+                                  <Button variant="outline-danger" onClick={()=>handleShow(p.LogId)}>
+                                      <i className="fas fa-trash"></i>
+                                  </Button>
                                   {user.user.Role===2?'':(!p.IsApproved?<>
                                     <Button variant="outline-success" onClick={()=>handleApprove(p.LogId)}>
                                         <i className="fas fa-check"></i>
@@ -437,7 +368,21 @@ const Log = (props) => {
           </div>
         </div>
       </div>
-            <NotificationContainer/>
+        <NotificationContainer/>
+        <Modal show={show} onHide={handleClose}>
+            <Modal.Header closeButton>
+            <Modal.Title>Remove log</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>Do you want to remove this log ? </Modal.Body>
+            <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+                Close
+            </Button>
+            <Button variant="danger" onClick={handleDelete}>
+                Delete
+            </Button>
+            </Modal.Footer>
+        </Modal>
     </div>
   );
 };
@@ -448,6 +393,7 @@ const mapDispatchToProps = (dispatch) => {
     getAllSubtask: () => dispatch(getAllSubtask()),
     approveLog: (id) => dispatch(approveLog(id)),
     disapproveLog: (id) => dispatch(disapproveLog(id)),
+    deleteLog: (id) => dispatch(deleteLog(id))
   };
 };
 
@@ -457,14 +403,13 @@ const mapStateToProps = (state) => ({
   user: state.user,
 });
 
-
 const parseRole = (role)=>{
   if (role === 0){
       return { log: true, project: true, subtask: true, user: true }
   }else if(role === 1){
-      return { log: true, project: true, subtask: true }
+      return { log: true, project: true, subtask: true, user: true }
   }else if(role === 2){
-      return { log: true }
+      return { log: true, project: true, subtask: true }
   }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(Log);

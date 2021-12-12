@@ -24,6 +24,12 @@ class LogService {
         const response = await Repository.put(endpoint)
         return response
     }
+
+    async deleteLog(id) {
+        const endpoint = '/Logs/'+id
+        const response = await Repository.delete(endpoint)
+        return response
+    }
 }
 
 export default new LogService()
