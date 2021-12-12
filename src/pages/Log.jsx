@@ -358,9 +358,11 @@ const Log = (props) => {
                                 </td>
                                 <td>{p.DateApproved ? p.DateApproved : ""}</td>
                                 <td>
+                                {!p.IsApproved?(<>
                                   <Button variant="outline-danger" onClick={()=>handleShow(p.LogId)}>
                                       <i className="fas fa-trash"></i>
                                   </Button>
+                                </>):''}
                                   {user.user.Role===2?'':(!p.IsApproved?<>
                                     <Button variant="outline-success" onClick={()=>handleApprove(p.LogId)}>
                                         <i className="fas fa-check"></i>

@@ -11,9 +11,6 @@ const Sidebar = (props) => {
                 <li>
                     <a href="/"><i className="fas fa-home"></i>Dashboard</a>
                 </li>
-                <li>
-                    <a href="login"><i className="fas fa-lock"></i>Login</a>
-                </li>
                 {role.log?(<li>
                     <a href="log"><i className="fas fa-table"></i>Log</a>
                 </li>):''}
